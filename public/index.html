@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Central</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎛️</text></svg>">
+<style>
+:root{
+  --bg:#0f1115;--panel:#161a21;--panel2:#1d222b;--line:#2a303b;--text:#e7eaf0;--muted:#8b93a3;
+  --accent:#4f8cff;--accent2:#2f6be0;--ok:#2fbf71;--warn:#e5a50a;--bad:#e5484d;--radius:12px;
+}
+@media (prefers-color-scheme: light){
+  :root{--bg:#f3f5f8;--panel:#fff;--panel2:#f7f8fa;--line:#e1e5ec;--text:#1b2230;--muted:#667085;}
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.app{display:grid;grid-template-rows:auto 1fr;height:100vh}
+header{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--line)}
+.brand{font-weight:700;font-size:16px;white-space:nowrap;outline:none;border-radius:6px;padding:2px 6px}
+.brand:focus{background:var(--panel2)}
+.search{flex:1;max-width:520px;display:flex;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:0 10px}
+.search input{flex:1;border:0;background:transparent;padding:8px 6px;outline:none}
+.kbd{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:0 5px}
+.spacer{flex:1}
+.btn{border:1px solid var(--line);background:var(--panel2);border-radius:9px;padding:7px 12px;white-space:nowrap}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:var(--accent2)}
+.btn.danger{color:var(--bad)}
+.btn.icon{padding:7px 9px}
+.save{font-size:12px;color:var(--muted);white-space:nowrap}
+.body{display:grid;grid-template-columns:220px 1fr;min-height:0}
+aside{background:var(--panel);border-right:1px solid var(--line);padding:12px 8px;overflow:auto}
+.cat{display:flex;align-items:center;gap:8px;width:100%;text-align:left;border:0;background:transparent;padding:8px 10px;border-radius:8px}
+.cat:hover{background:var(--panel2)}
+.cat.active{background:var(--panel2);box-shadow:inset 3px 0 0 var(--accent)}
+.cat .n{margin-left:auto;color:var(--muted);font-size:12px}
+.side-title{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:10px 10px 4px}
+main{display:grid;grid-template-rows:auto 1fr;min-height:0;min-width:0}
+.tabs{display:flex;gap:4px;padding:8px 12px 0;background:var(--bg);overflow-x:auto;border-bottom:1px solid var(--line)}
+.tab{display:flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid var(--line);border-bottom:0;border-radius:9px 9px 0 0;background:var(--panel2);max-width:220px;white-space:nowrap}
+.tab span.t{overflow:hidden;text-overflow:ellipsis}
+.tab.active{background:var(--panel);font-weight:600}
+.tab .x{border:0;background:transparent;color:var(--muted);padding:0 2px;font-size:15px;line-height:1}
+.tab .x:hover{color:var(--bad)}
+.views{position:relative;min-height:0;background:var(--panel)}
+.view{position:absolute;inset:0;display:none;overflow:auto}
+.view.active{display:block}
+.view iframe{border:0;width:100%;height:calc(100% - 38px);background:#fff;display:block}
+.framebar{display:flex;align-items:center;gap:8px;height:38px;padding:0 10px;border-bottom:1px solid var(--line);font-size:12px;color:var(--muted)}
+.framebar .u{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dash{display:grid;grid-template-columns:1fr 320px;gap:16px;padding:16px;min-height:100%}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;align-content:start}
+.section-h{grid-column:1/-1;display:flex;align-items:center;gap:8px;font-weight:600;margin-top:6px;color:var(--muted)}
+.card{position:relative;background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius);padding:14px;display:flex;flex-direction:column;gap:6px;cursor:pointer;transition:transform .08s,border-color .08s}
+.card:hover{border-color:var(--accent);transform:translateY(-1px)}
+.card .top{display:flex;align-items:center;gap:10px}
+.card .ic{font-size:24px;width:38px;height:38px;display:grid;place-items:center;background:var(--panel);border-radius:10px;flex:none}
+.card .nm{font-weight:600;line-height:1.2}
+.card .ds{color:var(--muted);font-size:12.5px;min-height:18px}
+.card .acts{display:flex;gap:6px;margin-top:4px;opacity:.0;transition:opacity .1s}
+.card:hover .acts,.card:focus-within .acts{opacity:1}
+.card .acts button{border:1px solid var(--line);background:var(--panel);border-radius:7px;padding:3px 8px;font-size:12px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--line);position:absolute;top:12px;right:12px}
+.dot.ok{background:var(--ok)}.dot.bad{background:var(--bad)}.dot.warn{background:var(--warn)}
+.card.empty .ds{color:var(--warn)}
+.addcard{border-style:dashed;align-items:center;justify-content:center;color:var(--muted);min-height:110px}
+.widgets{display:flex;flex-direction:column;gap:16px}
+.widget{background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius);padding:14px}
+.widget h3{margin:0 0 10px;font-size:14px;display:flex;align-items:center;gap:6px}
+.task{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px dashed var(--line)}
+.task:last-child{border-bottom:0}
+.task input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
+.task .tx{flex:1;outline:none;border-radius:4px;padding:1px 3px}
+.task.done .tx{text-decoration:line-through;color:var(--muted)}
+.task .del{border:0;background:transparent;color:var(--muted);opacity:0}
+.task:hover .del{opacity:1}
+.newtask{display:flex;gap:6px;margin-top:8px}
+.newtask input{flex:1}
+.input,input[type=text],input[type=url],input[type=password],select,textarea{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 9px;outline:none;width:100%}
+.input:focus,input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+textarea{resize:vertical;min-height:180px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.stat b{display:block;font-size:20px}
+.stat small{color:var(--muted)}
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--panel);color:var(--text);padding:0;width:min(520px,94vw)}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+.dlg-h{padding:14px 18px;border-bottom:1px solid var(--line);font-weight:700}
+.dlg-b{padding:16px 18px;display:grid;gap:12px}
+.dlg-f{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end}
+label.f{display:grid;gap:5px;font-size:12.5px;color:var(--muted)}
+.row2{display:grid;grid-template-columns:90px 1fr;gap:10px}
+.catrow{display:grid;grid-template-columns:60px 1fr auto;gap:8px;align-items:center}
+.menu{position:relative}
+.menu-pop{position:absolute;right:0;top:110%;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px;display:none;min-width:200px;z-index:10;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.menu-pop.open{display:block}
+.menu-pop button{display:block;width:100%;text-align:left;border:0;background:transparent;padding:8px 10px;border-radius:7px}
+.menu-pop button:hover{background:var(--panel2)}
+.login{position:fixed;inset:0;background:var(--bg);display:none;place-items:center;z-index:50}
+.login.show{display:grid}
+.login form{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;display:grid;gap:12px;width:min(340px,92vw)}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--panel);border:1px solid var(--line);padding:9px 14px;border-radius:10px;display:none;z-index:60}
+.toast.show{display:block}
+.empty-state{grid-column:1/-1;color:var(--muted);padding:30px;text-align:center}
+.burger{display:none}
+@media (max-width:1050px){.dash{grid-template-columns:1fr}}
+@media (max-width:760px){
+  .body{grid-template-columns:1fr}
+  aside{position:fixed;top:56px;bottom:0;left:0;width:240px;z-index:20;transform:translateX(-100%);transition:transform .15s}
+  aside.open{transform:none}
+  .burger{display:inline-block}
+  .kbd,.save{display:none}
+  .btn .lbl{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <button class="btn icon burger" id="burger" aria-label="Menu">☰</button>
+    <div class="brand" id="brand" contenteditable="true" spellcheck="false" title="Clique para renomear">Central</div>
+    <div class="search"><span>🔎</span><input id="q" placeholder="Buscar sistemas, sites, tarefas…" autocomplete="off"><span class="kbd">/</span></div>
+    <div class="spacer"></div>
+    <span class="save" id="saveState"></span>
+    <button class="btn" id="btnCheck" title="Verificar se os sites estão no ar">🩺 <span class="lbl">Status</span></button>
+    <button class="btn primary" id="btnAdd">＋ <span class="lbl">Adicionar</span></button>
+    <div class="menu">
+      <button class="btn icon" id="btnMenu" aria-label="Mais opções">⋯</button>
+      <div class="menu-pop" id="menuPop">
+        <button data-act="cats">🗂️ Gerenciar categorias</button>
+        <button data-act="export">⬇️ Exportar backup (.json)</button>
+        <button data-act="import">⬆️ Importar backup</button>
+        <button data-act="closeTabs">🧹 Fechar todas as abas</button>
+        <button data-act="logout" id="btnLogout">🔒 Sair</button>
+      </div>
+    </div>
+    <input type="file" id="fileImport" accept="application/json" hidden>
+  </header>
+  <div class="body">
+    <aside id="side"></aside>
+    <main>
+      <div class="tabs" id="tabs"></div>
+      <div class="views" id="views">
+        <div class="view active" data-view="home">
+          <div class="dash">
+            <div class="grid" id="grid"></div>
+            <div class="widgets">
+              <div class="widget">
+                <h3>📊 Visão geral</h3>
+                <div class="stats" id="stats"></div>
+              </div>
+              <div class="widget">
+                <h3>✅ Tarefas</h3>
+                <div id="tasks"></div>
+                <form class="newtask" id="taskForm"><input type="text" id="taskInput" placeholder="Nova tarefa…"><button class="btn">＋</button></form>
+              </div>
+              <div class="widget">
+                <h3>📝 Notas rápidas</h3>
+                <textarea id="notes" placeholder="Anotações, lembretes, números importantes…"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<dialog id="dlgLink">
+  <form method="dialog" id="linkForm">
+    <div class="dlg-h" id="linkTitle">Adicionar</div>
+    <div class="dlg-b">
+      <div class="row2">
+        <label class="f">Ícone<input type="text" id="fIcon" maxlength="4" placeholder="🔗"></label>
+        <label class="f">Nome<input type="text" id="fName" required placeholder="Ex.: Sistema SMS"></label>
+      </div>
+      <label class="f">Endereço (URL)<input type="url" id="fUrl" placeholder="https://…"></label>
+      <label class="f">Descrição<input type="text" id="fDesc" placeholder="Opcional"></label>
+      <div class="row2" style="grid-template-columns:1fr 1fr">
+        <label class="f">Categoria<select id="fCat"></select></label>
+        <label class="f">Como abrir<select id="fMode">
+          <option value="auto">Automático</option>
+          <option value="inside">Dentro da central</option>
+          <option value="newtab">Sempre em nova aba</option>
+        </select></label>
+      </div>
+    </div>
+    <div class="dlg-f">
+      <button type="button" class="btn danger" id="btnDel" style="margin-right:auto">Excluir</button>
+      <button type="button" class="btn" value="cancel" id="btnCancel">Cancelar</button>
+      <button class="btn primary" id="btnSave" value="ok">Salvar</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlgCats">
+  <div class="dlg-h">Categorias</div>
+  <div class="dlg-b" id="catList"></div>
+  <div class="dlg-f">
+    <button class="btn" id="btnAddCat" style="margin-right:auto">＋ Nova categoria</button>
+    <button class="btn primary" id="btnCatsDone">Concluir</button>
+  </div>
+</dialog>
+
+<div class="login" id="login">
+  <form id="loginForm">
+    <div style="font-size:28px;text-align:center">🎛️</div>
+    <div style="font-weight:700;text-align:center">Central protegida</div>
+    <input type="password" id="pwd" placeholder="Senha" autocomplete="current-password">
+    <button class="btn primary">Entrar</button>
+    <small id="loginErr" style="color:var(--bad);text-align:center"></small>
+  </form>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  const $ = (s, el = document) => el.querySelector(s);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const uid = () => Math.random().toString(36).slice(2, 10);
+  const store = {
+    get(k){ try { return localStorage.getItem(k); } catch { return null; } },
+    set(k,v){ try { localStorage.setItem(k,v); } catch {} },
+    del(k){ try { localStorage.removeItem(k); } catch {} }
+  };
+
+  let key = store.get('central-key') || '';
+  let data = null;
+  let status = {};           // url -> resultado da verificação
+  let filterCat = 'all';
+  let query = '';
+  let openTabs = [];         // [{id, linkId, url, name, icon}]
+  let activeTab = 'home';
+  let editingId = null;
+
+  // ---------- API ----------
+  async function api(path, opts = {}) {
+    const r = await fetch(path, { ...opts, headers: { 'Content-Type': 'application/json', 'x-central-key': key, ...(opts.headers||{}) } });
+    if (r.status === 401) { showLogin(); throw new Error('401'); }
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  }
+  let saveTimer = null;
+  function save() {
+    store.set('central-cache', JSON.stringify(data));
+    setSave('Salvando…');
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(async () => {
+      try { await api('/api/data', { method: 'PUT', body: JSON.stringify(data) }); setSave('✓ Salvo'); }
+      catch (e) { if (e.message !== '401') setSave('⚠️ Offline — salvo só neste navegador'); }
+    }, 500);
+  }
+  const setSave = (t) => { $('#saveState').textContent = t; };
+  function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('show'); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 2600); }
+
+  // ---------- login ----------
+  function showLogin(){ $('#login').classList.add('show'); setTimeout(()=>$('#pwd').focus(),50); }
+  $('#loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    key = $('#pwd').value;
+    try {
+      const r = await fetch('/api/data', { headers: { 'x-central-key': key } });
+      if (r.status === 401) { $('#loginErr').textContent = 'Senha incorreta'; return; }
+      store.set('central-key', key);
+      data = await r.json();
+      $('#login').classList.remove('show');
+      renderAll();
+    } catch { $('#loginErr').textContent = 'Não foi possível conectar'; }
+  });
+
+  // ---------- render ----------
+  function catById(id){ return data.categories.find(c => c.id === id); }
+  function matches(l){
+    if (filterCat !== 'all' && l.category !== filterCat) return false;
+    if (!query) return true;
+    const q = query.toLowerCase();
+    return [l.name, l.desc, l.url, catById(l.category)?.name].some(v => (v||'').toLowerCase().includes(q));
+  }
+
+  function renderSide(){
+    const count = (id) => data.links.filter(l => id === 'all' || l.category === id).length;
+    let h = `<div class="side-title">Navegação</div>
+      <button class="cat ${filterCat==='all'?'active':''}" data-cat="all">🏠 Todos <span class="n">${count('all')}</span></button>
+      <div class="side-title">Categorias</div>`;
+    for (const c of data.categories)
+      h += `<button class="cat ${filterCat===c.id?'active':''}" data-cat="${esc(c.id)}">${esc(c.icon||'📁')} ${esc(c.name)} <span class="n">${count(c.id)}</span></button>`;
+    h += `<button class="cat" data-act="cats" style="color:var(--muted)">⚙️ Gerenciar</button>`;
+    if (openTabs.length){
+      h += `<div class="side-title">Abertos agora</div>`;
+      for (const t of openTabs) h += `<button class="cat ${activeTab===t.id?'active':''}" data-tab="${t.id}">${esc(t.icon)} ${esc(t.name)}</button>`;
+    }
+    $('#side').innerHTML = h;
+  }
+
+  function cardHtml(l){
+    const st = status[l.url];
+    const dot = !l.url ? 'warn' : st ? (st.ok ? 'ok' : 'bad') : '';
+    const tip = !l.url ? 'Sem endereço' : st ? (st.ok ? `No ar · ${st.ms} ms${st.embeddable?'':' · abre em nova aba'}` : 'Fora do ar / inacessível') : 'Status não verificado';
+    return `<div class="card ${l.url?'':'empty'}" tabindex="0" data-open="${esc(l.id)}">
+      <span class="dot ${dot}" title="${esc(tip)}"></span>
+      <div class="top"><div class="ic">${esc(l.icon||'🔗')}</div><div class="nm">${esc(l.name)}</div></div>
+      <div class="ds">${esc(l.url ? (l.desc||hostOf(l.url)) : (l.desc||'Sem endereço — clique em Editar'))}</div>
+      <div class="acts">
+        <button data-inside="${esc(l.id)}" title="Abrir dentro da central">▣ Aqui</button>
+        <button data-newtab="${esc(l.id)}" title="Abrir em nova aba">↗ Nova aba</button>
+        <button data-edit="${esc(l.id)}">✎ Editar</button>
+      </div>
+    </div>`;
+  }
+  const hostOf = (u) => { try { return new URL(u).hostname.replace(/^www\./,''); } catch { return u; } };
+
+  function renderGrid(){
+    const list = data.links.filter(matches);
+    let h = '';
+    if (filterCat === 'all' && !query){
+      for (const c of data.categories){
+        const items = list.filter(l => l.category === c.id);
+        if (!items.length) continue;
+        h += `<div class="section-h">${esc(c.icon||'📁')} ${esc(c.name)}</div>` + items.map(cardHtml).join('');
+      }
+      const orphans = list.filter(l => !catById(l.category));
+      if (orphans.length) h += `<div class="section-h">📁 Sem categoria</div>` + orphans.map(cardHtml).join('');
+    } else {
+      h = list.map(cardHtml).join('');
+      if (!list.length) h = `<div class="empty-state">Nada encontrado${query?` para “${esc(query)}”`:''}.</div>`;
+    }
+    h += `<div class="card addcard" data-add="1">＋ Adicionar sistema ou site</div>`;
+    $('#grid').innerHTML = h;
+  }
+
+  function renderStats(){
+    const total = data.links.length;
+    const checked = data.links.filter(l => status[l.url]);
+    const up = checked.filter(l => status[l.url].ok).length;
+    const pend = data.tasks.filter(t => !t.done).length;
+    $('#stats').innerHTML = `
+      <div class="stat"><b>${total}</b><small>atalhos</small></div>
+      <div class="stat"><b>${checked.length ? `${up}/${checked.length}` : '–'}</b><small>no ar</small></div>
+      <div class="stat"><b>${pend}</b><small>tarefas</small></div>`;
+  }
+
+  function renderTasks(){
+    const q = query.toLowerCase();
+    const items = data.tasks.filter(t => !q || t.text.toLowerCase().includes(q));
+    $('#tasks').innerHTML = items.map(t => `
+      <div class="task ${t.done?'done':''}" data-task="${esc(t.id)}">
+        <input type="checkbox" ${t.done?'checked':''}>
+        <span class="tx" contenteditable="true" spellcheck="false">${esc(t.text)}</span>
+        <button class="del" title="Excluir">✕</button>
+      </div>`).join('') || `<div style="color:var(--muted)">Nenhuma tarefa.</div>`;
+  }
+
+  function renderTabs(){
+    let h = `<div class="tab ${activeTab==='home'?'active':''}" data-tab="home"><span class="t">🏠 Painel</span></div>`;
+    for (const t of openTabs)
+      h += `<div class="tab ${activeTab===t.id?'active':''}" data-tab="${t.id}" title="${esc(t.url)}"><span class="t">${esc(t.icon)} ${esc(t.name)}</span><button class="x" data-close="${t.id}">×</button></div>`;
+    $('#tabs').innerHTML = h;
+    document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.dataset.view === activeTab));
+  }
+
+  function renderAll(){
+    document.title = data.title || 'Central';
+    $('#brand').textContent = data.title || 'Central';
+    $('#notes').value = data.notes || '';
+    renderSide(); renderGrid(); renderStats(); renderTasks(); renderTabs();
+  }
+
+  // ---------- abas / iframes ----------
+  function openInside(l){
+    if (!l.url) return editLink(l.id);
+    const ex = openTabs.find(t => t.linkId === l.id);
+    if (ex) { activeTab = ex.id; renderTabs(); renderSide(); return; }
+    const t = { id: 'tab-' + uid(), linkId: l.id, url: l.url, name: l.name, icon: l.icon || '🔗' };
+    openTabs.push(t);
+    const v = document.createElement('div');
+    v.className = 'view'; v.dataset.view = t.id;
+    v.innerHTML = `<div class="framebar"><span class="u">${esc(l.url)}</span>
+        <button class="btn" data-reload="${t.id}">⟳ Recarregar</button>
+        <a class="btn" href="${esc(l.url)}" target="_blank" rel="noopener">↗ Nova aba</a></div>
+      <iframe src="${esc(l.url)}" referrerpolicy="no-referrer-when-downgrade" allow="clipboard-read; clipboard-write; fullscreen"></iframe>`;
+    $('#views').appendChild(v);
+    activeTab = t.id;
+    renderTabs(); renderSide();
+    const st = status[l.url];
+    if (st && !st.embeddable) toast('Este site bloqueia ser aberto dentro de outra página. Use “Nova aba”.');
+  }
+  function openNewTab(l){ if (!l.url) return editLink(l.id); window.open(l.url, '_blank', 'noopener'); }
+  function openSmart(l){
+    if (!l.url) return editLink(l.id);
+    const mode = l.mode || 'auto';
+    if (mode === 'newtab') return openNewTab(l);
+    if (mode === 'inside') return openInside(l);
+    const st = status[l.url];
+    if (st && !st.embeddable) return openNewTab(l);
+    if (!st) checkLinks([l]).then(() => { const s = status[l.url]; (s && !s.embeddable) ? openNewTab(l) : openInside(l); });
+    else openInside(l);
+  }
+  function closeTab(id){
+    openTabs = openTabs.filter(t => t.id !== id);
+    document.querySelector(`.view[data-view="${id}"]`)?.remove();
+    if (activeTab === id) activeTab = openTabs.at(-1)?.id || 'home';
+    renderTabs(); renderSide();
+  }
+
+  // ---------- status ----------
+  async function checkLinks(list = data.links){
+    const urls = [...new Set(list.map(l => l.url).filter(Boolean))];
+    if (!urls.length) return;
+    try {
+      const { results } = await api('/api/check', { method: 'POST', body: JSON.stringify({ urls }) });
+      for (const r of results) status[r.url] = r;
+      renderGrid(); renderStats();
+    } catch {}
+  }
+
+  // ---------- edição de links ----------
+  function fillCats(sel){
+    $('#fCat').innerHTML = data.categories.map(c => `<option value="${esc(c.id)}">${esc(c.icon||'')} ${esc(c.name)}</option>`).join('');
+    if (sel) $('#fCat').value = sel;
+  }
+  function editLink(id){
+    editingId = id || null;
+    const l = data.links.find(x => x.id === id) || { icon:'🔗', name:'', url:'', desc:'', category: filterCat !== 'all' ? filterCat : data.categories[0]?.id, mode:'auto' };
+    $('#linkTitle').textContent = id ? 'Editar' : 'Adicionar';
+    fillCats(l.category);
+    $('#fIcon').value = l.icon || ''; $('#fName').value = l.name; $('#fUrl').value = l.url;
+    $('#fDesc').value = l.desc || ''; $('#fMode').value = l.mode || 'auto';
+    $('#btnDel').style.visibility = id ? 'visible' : 'hidden';
+    $('#dlgLink').showModal(); $('#fName').focus();
+  }
+  $('#linkForm').addEventListener('submit', (e) => {
+    let url = $('#fUrl').value.trim();
+    if (url && !/^https?:\/\//i.test(url)) url = 'https://' + url;
+    const v = { icon: $('#fIcon').value.trim() || '🔗', name: $('#fName').value.trim(), url, desc: $('#fDesc').value.trim(), category: $('#fCat').value, mode: $('#fMode').value };
+    if (!v.name) { e.preventDefault(); return; }
+    if (editingId) Object.assign(data.links.find(x => x.id === editingId), v);
+    else data.links.push({ id: uid(), ...v });
+    save(); renderAll();
+    if (url) checkLinks([v]);
+  });
+  $('#btnCancel').onclick = () => $('#dlgLink').close();
+  $('#btnDel').onclick = () => {
+    if (!editingId || !confirm('Excluir este atalho?')) return;
+    data.links = data.links.filter(x => x.id !== editingId);
+    $('#dlgLink').close(); save(); renderAll();
+  };
+
+  // ---------- categorias ----------
+  function renderCatList(){
+    $('#catList').innerHTML = data.categories.map(c => `
+      <div class="catrow" data-cid="${esc(c.id)}">
+        <input type="text" class="ci" value="${esc(c.icon||'')}" maxlength="4">
+        <input type="text" class="cn" value="${esc(c.name)}">
+        <button class="btn danger cd" title="Excluir">✕</button>
+      </div>`).join('') || '<div style="color:var(--muted)">Nenhuma categoria.</div>';
+  }
+  $('#catList').addEventListener('input', (e) => {
+    const row = e.target.closest('.catrow'); if (!row) return;
+    const c = catById(row.dataset.cid);
+    if (e.target.classList.contains('ci')) c.icon = e.target.value;
+    if (e.target.classList.contains('cn')) c.name = e.target.value;
+    save(); renderSide(); renderGrid();
+  });
+  $('#catList').addEventListener('click', (e) => {
+    if (!e.target.classList.contains('cd')) return;
+    const id = e.target.closest('.catrow').dataset.cid;
+    const n = data.links.filter(l => l.category === id).length;
+    if (!confirm(n ? `Excluir categoria? ${n} atalho(s) ficarão “Sem categoria”.` : 'Excluir categoria?')) return;
+    data.categories = data.categories.filter(c => c.id !== id);
+    if (filterCat === id) filterCat = 'all';
+    save(); renderCatList(); renderAll();
+  });
+  $('#btnAddCat').onclick = () => { data.categories.push({ id: uid(), name: 'Nova categoria', icon: '📁' }); save(); renderCatList(); renderSide(); };
+  $('#btnCatsDone').onclick = () => $('#dlgCats').close();
+
+  // ---------- eventos gerais ----------
+  document.addEventListener('click', (e) => {
+    const t = e.target.closest('[data-inside],[data-newtab],[data-edit],[data-open],[data-add],[data-cat],[data-tab],[data-close],[data-reload],[data-act]');
+    if (!t) { $('#menuPop').classList.remove('open'); return; }
+    const link = (id) => data.links.find(l => l.id === id);
+    if (t.dataset.close) { e.stopPropagation(); return closeTab(t.dataset.close); }
+    if (t.dataset.inside) { e.stopPropagation(); return openInside(link(t.dataset.inside)); }
+    if (t.dataset.newtab) { e.stopPropagation(); return openNewTab(link(t.dataset.newtab)); }
+    if (t.dataset.edit) { e.stopPropagation(); return editLink(t.dataset.edit); }
+    if (t.dataset.open) return openSmart(link(t.dataset.open));
+    if (t.dataset.add) return editLink(null);
+    if (t.dataset.cat) { filterCat = t.dataset.cat; activeTab = 'home'; $('#side').classList.remove('open'); return renderAll(); }
+    if (t.dataset.tab) { activeTab = t.dataset.tab; $('#side').classList.remove('open'); renderTabs(); return renderSide(); }
+    if (t.dataset.reload) { const f = document.querySelector(`.view[data-view="${t.dataset.reload}"] iframe`); if (f) f.src = f.src; return; }
+    if (t.dataset.act) {
+      $('#menuPop').classList.remove('open');
+      const a = t.dataset.act;
+      if (a === 'cats') { renderCatList(); $('#dlgCats').showModal(); }
+      if (a === 'export') {
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const u = URL.createObjectURL(blob); const el = document.createElement('a');
+        el.href = u; el.download = `central-backup-${new Date().toISOString().slice(0,10)}.json`; el.click(); URL.revokeObjectURL(u);
+      }
+      if (a === 'import') $('#fileImport').click();
+      if (a === 'closeTabs') [...openTabs].forEach(x => closeTab(x.id));
+      if (a === 'logout') { store.del('central-key'); key = ''; location.reload(); }
+    }
+  });
+  $('#btnMenu').addEventListener('click', (e) => { e.stopPropagation(); $('#menuPop').classList.toggle('open'); });
+  $('#btnAdd').onclick = () => editLink(null);
+  $('#btnCheck').onclick = async () => { $('#btnCheck').disabled = true; toast('Verificando sites…'); await checkLinks(); $('#btnCheck').disabled = false; toast('Status atualizado'); };
+  $('#burger').onclick = () => $('#side').classList.toggle('open');
+  $('#q').addEventListener('input', (e) => { query = e.target.value.trim(); activeTab = 'home'; renderGrid(); renderTasks(); renderTabs(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === '/' && !/INPUT|TEXTAREA/.test(document.activeElement.tagName) && !document.activeElement.isContentEditable) { e.preventDefault(); $('#q').focus(); }
+    if (e.key === 'Enter' && document.activeElement.classList.contains('card')) document.activeElement.click();
+  });
+  $('#brand').addEventListener('blur', () => { data.title = $('#brand').textContent.trim() || 'Central'; document.title = data.title; save(); });
+  $('#brand').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); } });
+  $('#notes').addEventListener('input', (e) => { data.notes = e.target.value; save(); });
+
+  $('#taskForm').addEventListener('submit', (e) => {
+    e.preventDefault(); const v = $('#taskInput').value.trim(); if (!v) return;
+    data.tasks.unshift({ id: uid(), text: v, done: false }); $('#taskInput').value = ''; save(); renderTasks(); renderStats();
+  });
+  $('#tasks').addEventListener('change', (e) => {
+    const row = e.target.closest('.task'); const t = data.tasks.find(x => x.id === row.dataset.task);
+    t.done = e.target.checked; save(); renderTasks(); renderStats();
+  });
+  $('#tasks').addEventListener('click', (e) => {
+    if (!e.target.classList.contains('del')) return;
+    const id = e.target.closest('.task').dataset.task; data.tasks = data.tasks.filter(x => x.id !== id); save(); renderTasks(); renderStats();
+  });
+  $('#tasks').addEventListener('focusout', (e) => {
+    if (!e.target.classList.contains('tx')) return;
+    const t = data.tasks.find(x => x.id === e.target.closest('.task').dataset.task);
+    const v = e.target.textContent.trim(); if (v && v !== t.text) { t.text = v; save(); }
+  });
+
+  $('#fileImport').addEventListener('change', async (e) => {
+    const f = e.target.files[0]; if (!f) return;
+    try {
+      const d = JSON.parse(await f.text());
+      if (!Array.isArray(d.links)) throw 0;
+      if (!confirm('Substituir os dados atuais por este backup?')) return;
+      d.categories ||= []; d.tasks ||= []; data = d; save(); renderAll(); toast('Backup importado');
+    } catch { toast('Arquivo inválido'); }
+    e.target.value = '';
+  });
+
+  // ---------- início ----------
+  (async () => {
+    try {
+      const cfg = await fetch('/api/config').then(r => r.json());
+      if (!cfg.protected) $('#btnLogout').style.display = 'none';
+      data = await api('/api/data');
+      store.set('central-cache', JSON.stringify(data));
+      setSave('✓ Sincronizado');
+      renderAll();
+      checkLinks();
+    } catch (e) {
+      if (e.message === '401') return;
+      const cache = store.get('central-cache');
+      if (cache) { data = JSON.parse(cache); renderAll(); setSave('⚠️ Offline'); }
+    }
+  })();
+})();
+</script>
+</body>
+</html>

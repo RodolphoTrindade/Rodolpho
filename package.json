@@ -1,0 +1,14 @@
+{
+  "name": "central-rodolpho",
+  "version": "1.0.0",
+  "description": "Central única para controlar links, sistemas, tarefas e notas na mesma tela.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}
