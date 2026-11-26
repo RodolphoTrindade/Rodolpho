@@ -583,13 +583,26 @@ function pickAvatar() {
     <div style="font-weight:900;color:var(--ink2)">Escolha seu avatar</div>
     <div class="avatar-pick" id="mAv">${AVATARS.map(a => `<button type="button" data-a="${a}" class="${a === av ? 'sel' : ''}">${a}</button>`).join('')}</div>
     <div style="font-weight:900;color:var(--ink2);margin-top:6px">Sua cor favorita</div>
-    <div class="swatches" id="mTh">${Object.entries(THEMES).map(([k, t]) => `<button type="button" class="swatch ${k === th ? 'sel' : ''}" data-t="${k}" style="background:${t.g}"><b>${t.e}</b>${t.l}</button>`).join('')}</div>`,
+    <div class="swatches" id="mTh">${Object.entries(THEMES).map(([k, t]) => `<button type="button" class="swatch ${k === th ? 'sel' : ''}" data-t="${k}" style="background:${t.g}"><b>${t.e}</b>${t.l}</button>`).join('')}</div>
+    <div style="font-weight:900;color:var(--ink2);margin-top:6px">Som</div>
+    <button type="button" class="btn" id="mTest">🔊 Testar som e voz</button>
+    <div id="mTestInfo" class="muted" style="font-weight:700;font-size:14px"></div>`,
     actions: [{ label: 'Cancelar', cls: 'ghost', onClick: () => applyTheme(S.me.theme) }, { label: 'Salvar ✨', cls: 'primary', onClick: async () => {
       try { const r = await api('/api/me', { method: 'PATCH', body: { avatar: av, theme: th } }); Object.assign(S.me, { avatar: r.me.avatar, theme: r.me.theme }); renderHome(); sndOk(); confetti(60); }
       catch (e) { toast('⚠️ ' + e.message); return true; }
     } }],
     onOpen: (el) => {
       el.addEventListener('click', (e) => { if (e.target === el) applyTheme(S.me.theme); });
+      $('#mTest', el).onclick = () => {
+        const was = soundOn; soundOn = true; sndWin(); soundOn = was;
+        const ok = window.falarTexto ? window.falarTexto(`Oi, ${S.me.name.split(' ')[0]}! O som está funcionando.`, 'pt-BR') : false;
+        const i = window.infoVoz ? window.infoVoz() : {};
+        setTimeout(() => { const j = window.infoVoz ? window.infoVoz() : i;
+          $('#mTestInfo', el).innerHTML = !ok ? '🔇 Este navegador não lê em voz alta. Tente no Chrome (Android) ou Safari (iPhone).'
+            : `Você deveria ouvir uma musiquinha e uma voz. Vozes no aparelho: ${j.pt} em português, ${j.en} em inglês. Som: ${j.estadoAudio === 'running' ? 'ligado ✅' : j.estadoAudio}.` +
+              (j.total && !j.pt ? '<br>⚠️ Não há voz em português instalada: instale nas configurações de fala do aparelho.' : '') +
+              '<br>Não ouviu? Aumente o volume de <b>mídia</b> e, no iPhone, desligue a chave de silencioso.'; }, 700);
+      };
       $('#mAv', el).onclick = (e) => { const b = e.target.closest('button'); if (!b) return; av = b.dataset.a; $$('#mAv button', el).forEach(x => x.classList.toggle('sel', x === b)); };
       $('#mTh', el).onclick = (e) => { const b = e.target.closest('button'); if (!b) return; th = b.dataset.t; $$('#mTh button', el).forEach(x => x.classList.toggle('sel', x === b)); applyTheme(th); };
     } });
