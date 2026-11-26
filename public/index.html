@@ -594,14 +594,16 @@ function pickAvatar() {
     onOpen: (el) => {
       el.addEventListener('click', (e) => { if (e.target === el) applyTheme(S.me.theme); });
       $('#mTest', el).onclick = () => {
-        const was = soundOn; soundOn = true; sndWin(); soundOn = was;
-        const ok = window.falarTexto ? window.falarTexto(`Oi, ${S.me.name.split(' ')[0]}! O som está funcionando.`, 'pt-BR') : false;
-        const i = window.infoVoz ? window.infoVoz() : {};
-        setTimeout(() => { const j = window.infoVoz ? window.infoVoz() : i;
+        const was = soundOn; soundOn = true;
+        let feito = false; const fim = () => { if (feito) return; feito = true; sndWin(); soundOn = was; };
+        setTimeout(fim, 5000);
+        const ok = window.falarTexto ? window.falarTexto(`Oi, ${S.me.name.split(' ')[0]}! O som está funcionando.`, 'pt-BR', fim) : false;
+        if (!ok) fim();
+        setTimeout(() => { const j = window.infoVoz ? window.infoVoz() : {}, f = window.__ultimaFala || {};
           $('#mTestInfo', el).innerHTML = !ok ? '🔇 Este navegador não lê em voz alta. Tente no Chrome (Android) ou Safari (iPhone).'
-            : `Você deveria ouvir uma musiquinha e uma voz. Vozes no aparelho: ${j.pt} em português, ${j.en} em inglês. Som: ${j.estadoAudio === 'running' ? 'ligado ✅' : j.estadoAudio}.` +
-              (j.total && !j.pt ? '<br>⚠️ Não há voz em português instalada: instale nas configurações de fala do aparelho.' : '') +
-              '<br>Não ouviu? Aumente o volume de <b>mídia</b> e, no iPhone, desligue a chave de silencioso.'; }, 700);
+            : `Primeiro a voz, depois uma musiquinha. Vozes: ${j.pt} em português, ${j.en} em inglês. A voz ${f.comecou ? 'começou ✅' : 'NÃO começou ❌'}${f.erro ? ' (erro: ' + f.erro + ')' : ''}.` +
+              (j.total && !j.pt ? '<br>⚠️ Não há voz em português instalada neste aparelho.' : '') +
+              '<br>Não ouviu? Aumente o volume de <b>mídia</b> e desligue a chave de silencioso.'; }, 1800);
       };
       $('#mAv', el).onclick = (e) => { const b = e.target.closest('button'); if (!b) return; av = b.dataset.a; $$('#mAv button', el).forEach(x => x.classList.toggle('sel', x === b)); };
       $('#mTh', el).onclick = (e) => { const b = e.target.closest('button'); if (!b) return; th = b.dataset.t; $$('#mTh button', el).forEach(x => x.classList.toggle('sel', x === b)); applyTheme(th); };

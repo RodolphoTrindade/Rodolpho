@@ -92,12 +92,19 @@
     };
   }
 
-  window.falarTexto = function (texto, lang) {
+  window.falarTexto = function (texto, lang, cb) {
     if (!temSintese) return false;
     try {
       ss.cancel();
+      // iPhone: com os efeitos sonoros ligados a voz fica muda. Pausa os efeitos enquanto fala.
+      try { if (window.__audioCtx && window.__audioCtx.state === 'running') window.__audioCtx.suspend(); } catch (e) {}
+      try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
       var u = new SpeechSynthesisUtterance(String(texto));
       u.lang = lang || 'pt-BR'; u.rate = 0.9; u.volume = 1;
+      var st = window.__ultimaFala = { comecou: false, terminou: false, erro: '' };
+      u.onstart = function () { st.comecou = true; };
+      u.onend = function () { st.terminou = true; if (cb) cb(); };
+      u.onerror = function (e) { st.erro = (e && e.error) || 'erro'; if (cb) cb(); };
       ss.speak(u);
       return true;
     } catch (e) { return false; }
