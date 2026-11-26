@@ -52,6 +52,23 @@ function blankData() {
     progress: {} };
 }
 
+// Reinício dos dados: defina RESET_ID no Railway (ex.: RESET_ID=2026-11-26). Na subida, se o valor for novo,
+// os dados atuais viram uma cópia (familia.backup-*.json) e a central volta ao primeiro cadastro. Roda só uma vez por valor.
+(function resetSeSolicitado() {
+  const id = String(process.env.RESET_ID || '').trim();
+  if (!id) return;
+  const marca = path.join(DATA_DIR, '.reset-id');
+  let feito = ''; try { feito = fs.readFileSync(marca, 'utf8').trim(); } catch {}
+  if (feito === id) return;
+  try {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    if (fs.existsSync(DATA_FILE)) fs.renameSync(DATA_FILE, path.join(DATA_DIR, 'familia.backup-' + Date.now() + '.json'));
+    if (fs.existsSync(UPLOAD_DIR)) fs.renameSync(UPLOAD_DIR, path.join(DATA_DIR, 'jogos-enviados.backup-' + Date.now()));
+    fs.writeFileSync(marca, id);
+    console.log('Dados reiniciados (RESET_ID=' + id + '). Cópia guardada em ' + DATA_DIR);
+  } catch (e) { console.error('Falha ao reiniciar dados:', e.message); }
+})();
+
 let data;
 function loadData() {
   try {
