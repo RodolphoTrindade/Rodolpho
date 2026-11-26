@@ -445,17 +445,25 @@ function renderSetup() {
 }
 
 // ------------------------------------------------------------ entrar
-function renderLogin(msg = '', prefill = '') {
+function renderLogin(msg = '', prefill = '', modo) {
+  modo = modo || (new URLSearchParams(location.search).has('responsavel') ? 'resp' : 'crianca');
+  const resp = modo === 'resp';
   app.innerHTML = `<div class="center-screen"><form class="login-card" id="loginForm">
-    <div class="mascot">🦉</div>
+    <div class="mascot">${resp ? '🧑‍🏫' : '🦉'}</div>
     <h1 style="font-size:34px">${esc(S.family.name)}</h1>
-    <p class="muted" style="margin:0;font-weight:700">Oi! Digite seu <b>código secreto</b> para entrar na aventura.</p>
-    <input class="code-input" id="lCode" placeholder="LEAO-AB12" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${esc(prefill)}">
+    <div class="row" style="justify-content:center;gap:8px">
+      <button type="button" class="btn small ${resp ? '' : 'primary'}" id="tCri">🧒 Sou criança</button>
+      <button type="button" class="btn small ${resp ? 'primary' : ''}" id="tResp">🧑 Sou responsável</button>
+    </div>
+    <p class="muted" style="margin:0;font-weight:700">${resp ? 'Digite a <b>senha do responsável</b> para abrir o painel.' : 'Oi! Digite seu <b>código secreto</b> para entrar na aventura.'}</p>
+    ${resp ? `<input class="code-input" type="password" id="lCode" placeholder="Sua senha" autocomplete="current-password">`
+           : `<input class="code-input" id="lCode" placeholder="LEAO-AB12" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${esc(prefill)}">`}
     <div class="err" id="lErr">${esc(msg)}</div>
     <button class="btn primary big">Entrar 🚀</button>
-    <small class="muted" style="font-weight:700">Responsável: use sua senha no mesmo campo.</small>
   </form></div>`;
   const inp = $('#lCode'); setTimeout(() => inp.focus(), 50);
+  $('#tCri').onclick = () => renderLogin('', '', 'crianca');
+  $('#tResp').onclick = () => renderLogin('', '', 'resp');
   $('#loginForm').onsubmit = async (e) => {
     e.preventDefault();
     try { await api('/api/login', { method: 'POST', body: { code: inp.value } }); await loadHome(); }
