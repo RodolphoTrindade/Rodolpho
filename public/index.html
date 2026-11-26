@@ -74,7 +74,7 @@ textarea{resize:vertical;min-height:110px;font-weight:600}
 .brandbar .sp{flex:1}
 
 /* missão do dia */
-.mission{margin-top:18px;border-radius:28px;padding:22px;color:#fff;display:flex;align-items:center;gap:18px;background:linear-gradient(120deg,#6d5dfc,#8b5cf6 45%,#ec4899);box-shadow:var(--shadow);position:relative;overflow:hidden}
+.mission{margin-top:18px;border-radius:28px;padding:22px;color:#fff;display:flex;align-items:center;gap:18px;background:var(--hero,linear-gradient(120deg,#6d5dfc,#8b5cf6 45%,#ec4899));box-shadow:var(--shadow);position:relative;overflow:hidden}
 .mission::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.12)}
 .mission .em{font-size:64px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.2))}
 .mission h2{font-size:clamp(22px,3vw,30px)}
@@ -91,7 +91,7 @@ textarea{resize:vertical;min-height:110px;font-weight:600}
 
 /* cartões de jogo */
 .games{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
-.game{position:relative;border:0;text-align:left;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:0;overflow:hidden;display:flex;flex-direction:column;transition:transform .12s}
+.game{position:relative;border:0;text-align:left;cursor:pointer;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:0;overflow:hidden;display:flex;flex-direction:column;transition:transform .12s}
 .game:hover{transform:translateY(-4px) rotate(-.4deg)}
 .game .art{height:120px;display:grid;place-items:center;font-size:64px;background:var(--c);position:relative;overflow:hidden}
 .game .art::before,.game .art::after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.18)}
@@ -103,6 +103,13 @@ textarea{resize:vertical;min-height:110px;font-weight:600}
 .game .meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto}
 .stars{letter-spacing:2px;font-size:20px}
 .stars .off{filter:grayscale(1);opacity:.3}
+.fav{position:absolute;top:10px;left:10px;z-index:3;width:44px;height:44px;border-radius:14px;border:0;background:rgba(255,255,255,.92);font-size:22px;display:grid;place-items:center;box-shadow:0 3px 0 rgba(0,0,0,.12)}
+.fav.on{animation:pop .4s}
+.fav:not(.on) span{filter:grayscale(1);opacity:.55}
+.swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.swatch{border:4px solid transparent;border-radius:18px;padding:12px 6px;color:#fff;font-weight:900;display:grid;gap:2px;place-items:center;font-size:13px}
+.swatch b{font-size:26px}
+.swatch.sel{border-color:var(--ink);transform:scale(1.04)}
 .badge-new{position:absolute;top:10px;right:10px;background:var(--sun);color:#3b2a00;font-weight:900;font-size:12px;padding:4px 10px;border-radius:999px;z-index:2;box-shadow:0 3px 0 #d99500}
 .empty{background:#fff;border-radius:var(--radius);padding:30px;text-align:center;color:var(--ink2);font-weight:700;box-shadow:var(--shadow)}
 
@@ -198,14 +205,86 @@ table.prog th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-
 .magic .e{font-size:70px;animation:bob 1.6s ease-in-out infinite}
 
 /* modal simples */
-.modal{position:fixed;inset:0;z-index:60;background:rgba(36,33,74,.45);display:grid;place-items:center;padding:16px}
-.modal-box{background:#fff;border-radius:26px;width:min(520px,100%);max-height:92vh;overflow:auto;box-shadow:var(--shadow);animation:pop2 .18s}
+.modal{position:fixed;inset:0;z-index:60;background:rgba(36,33,74,.45);display:flex;align-items:center;justify-content:center;padding:16px}
+.modal-box{background:#fff;border-radius:26px;width:min(520px,100%);max-height:92vh;max-height:92dvh;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow);animation:pop2 .18s}
+.modal-b{overflow-y:auto;flex:1 1 auto;min-height:0}
+.modal-h,.modal-f{flex:none}
 @keyframes pop2{from{transform:scale(.94);opacity:0}}
 .modal-h{padding:18px 20px 6px;font-family:"Baloo 2";font-size:24px;font-weight:800}
 .modal-b{padding:10px 20px;display:grid;gap:12px}
 .modal-f{padding:12px 20px 18px;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 18px;border-radius:16px;font-weight:800;z-index:80;box-shadow:var(--shadow);max-width:90vw;text-align:center}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:90}
+
+/* ---------- celular ---------- */
+@media(max-width:640px){
+  .wrap{padding:12px 12px 48px}
+  .btn{white-space:normal;text-align:center}
+  .brandbar{gap:8px;flex-wrap:wrap}
+  .brandbar .logo{font-size:17px;flex:1 1 100%}
+  .brandbar .sp{display:none}
+  .brandbar .btn.small{flex:1;padding:10px}
+  .brandbar .btn .lbl{display:none}
+  .icon-btn{width:44px;height:44px;font-size:20px}
+  .hello{min-width:0;gap:10px;flex:1 1 100%}
+  .hello h1{font-size:26px}
+  .top{gap:10px}
+  .big-avatar{width:58px;height:58px;font-size:36px;border-radius:18px}
+  .hello p{font-size:14px}
+  .top .starbox{font-size:20px;padding:8px 14px}
+  .mission{padding:18px;gap:12px}
+  .mission .em{font-size:48px}
+  .section-title{font-size:21px;margin:22px 0 10px}
+  .games{grid-template-columns:1fr 1fr;gap:12px}
+  .game .art{height:92px;font-size:46px}
+  .game .bd{padding:10px 12px 12px;gap:5px}
+  .game h3{font-size:16px}
+  .game .bd small{display:none}
+  .game .meta{flex-direction:column;align-items:flex-start;gap:6px}
+  .game .meta .chip{align-self:stretch;justify-content:center}
+  .stars{font-size:16px;letter-spacing:0}
+  .fav{width:38px;height:38px;font-size:19px;top:8px;left:8px}
+  .badge-new{top:8px;right:8px;font-size:11px;padding:3px 8px}
+  .trophies{grid-template-columns:repeat(2,1fr);gap:10px}
+  .trophy .e{font-size:32px}
+  .ov-top{padding:10px 12px}
+  .ov-body{padding:6px 12px 28px}
+  .qbubble{padding:16px;border-radius:22px;gap:10px}
+  .qbubble .row .btn.small{padding:8px 10px}
+  .opt{padding:14px;font-size:18px;min-height:62px;border-radius:18px}
+  .opt .k{width:34px;height:34px}
+  .vf .opt{font-size:19px}
+  .typein{flex-direction:column}
+  .typein input{min-width:0}
+  .feedback{padding:14px;gap:10px}
+  .feedback .e{font-size:30px}
+  .feedback .t{font-size:20px}
+  #qNext{width:100%}
+  .result{margin:12px auto;padding:22px 16px}
+  .result .bigstars{font-size:46px}
+  .result .row .btn{flex:1}
+  .sheet-panel{width:100%}
+  .sheet-head{padding:12px 14px;gap:8px}
+  .sheet-head h2{font-size:21px}
+  .tabsbar{padding:6px 10px 0;gap:2px}
+  .tabsbar button{padding:9px 10px;font-size:14px}
+  .sheet-body{padding:12px}
+  .panel{padding:14px;border-radius:18px}
+  .panel .row>.btn.primary,.panel .row>.btn.big{flex:1 1 100%}
+  .item .info{min-width:0;flex:1 1 calc(100% - 64px)}
+  .item>.row{flex:1 1 100%;justify-content:flex-end}
+  .qedit .hd{flex-wrap:wrap}
+  .qedit .hd b{flex:1 1 100%}
+  .qedit .hd select{flex:1}
+  .codecard .code{font-size:26px}
+  .modal{align-items:flex-end;padding:0}
+  .modal-box{width:100%;border-radius:26px 26px 0 0;max-height:94vh;max-height:94dvh;padding-bottom:env(safe-area-inset-bottom)}
+  .modal-f .btn{flex:1}
+  .swatches{grid-template-columns:repeat(4,1fr);gap:8px}
+  .avatar-pick button{width:46px;height:46px;font-size:26px}
+  .login-card{padding:28px 18px;border-radius:26px}
+}
+@media(max-width:360px){ .games{grid-template-columns:1fr} .tabsbar button{font-size:13px;padding:8px} }
 </style>
 </head>
 <body>
@@ -229,6 +308,21 @@ const SUBJECTS = {
   'Artes': { e: '🎨', c: '#ec4899' }, 'Religião': { e: '🕊️', c: '#6366f1' }, 'Outra': { e: '🧩', c: '#64748b' }
 };
 const subj = (s) => SUBJECTS[s] || { e: '🧩', c: '#64748b' };
+const THEMES = {
+  roxo: { l: 'Roxo', e: '🦄', p: '#6d5dfc', p2: '#5546e8', g: 'linear-gradient(120deg,#6d5dfc,#8b5cf6 45%,#ec4899)', b1: '#eef0ff', b2: '#fff4e6' },
+  azul: { l: 'Azul', e: '🐬', p: '#0284c7', p2: '#0369a1', g: 'linear-gradient(120deg,#0284c7,#38bdf8 55%,#22d3ee)', b1: '#e6f6ff', b2: '#eefcff' },
+  verde: { l: 'Verde', e: '🦖', p: '#16a34a', p2: '#15803d', g: 'linear-gradient(120deg,#16a34a,#22c55e 50%,#a3e635)', b1: '#eafbea', b2: '#fbffe9' },
+  laranja: { l: 'Laranja', e: '🦊', p: '#ea580c', p2: '#c2410c', g: 'linear-gradient(120deg,#ea580c,#f97316 50%,#facc15)', b1: '#fff1e6', b2: '#fffbe6' },
+  rosa: { l: 'Rosa', e: '🌸', p: '#db2777', p2: '#be185d', g: 'linear-gradient(120deg,#db2777,#ec4899 50%,#f9a8d4)', b1: '#ffeef7', b2: '#fff4f9' },
+  vermelho: { l: 'Vermelho', e: '🚒', p: '#dc2626', p2: '#b91c1c', g: 'linear-gradient(120deg,#dc2626,#ef4444 50%,#fb923c)', b1: '#ffeded', b2: '#fff6ea' },
+  amarelo: { l: 'Amarelo', e: '🌞', p: '#ca8a04', p2: '#a16207', g: 'linear-gradient(120deg,#ca8a04,#eab308 50%,#facc15)', b1: '#fffbe0', b2: '#fff6e0' },
+  espaco: { l: 'Espaço', e: '🚀', p: '#4338ca', p2: '#3730a3', g: 'linear-gradient(120deg,#1e1b4b,#4338ca 55%,#7c3aed)', b1: '#e9e8ff', b2: '#efe9ff' }
+};
+function applyTheme(name) {
+  const t = THEMES[name] || THEMES.roxo, r = document.documentElement.style;
+  r.setProperty('--primary', t.p); r.setProperty('--primary2', t.p2); r.setProperty('--bg1', t.b1); r.setProperty('--bg2', t.b2); r.setProperty('--hero', t.g);
+  $('meta[name=theme-color]')?.setAttribute('content', t.p);
+}
 const OPT_COLORS = ['#6d5dfc', '#f97316', '#0ea5e9', '#22c55e', '#ec4899', '#eab308'];
 
 async function api(path, opts = {}) {
@@ -405,7 +499,9 @@ function starsHtml(n) { return `<span class="stars">${[0, 1, 2].map(i => `<span 
 function gameCard(g) {
   const s = subj(g.subject), p = S.progress[g.id];
   const isNew = !p && g.createdAt && (Date.now() - new Date(g.createdAt)) < 7 * 864e5;
-  return `<button class="game" data-play="${esc(g.id)}" style="--c:${s.c}">
+  const fav = (S.me.favorites || []).includes(g.id);
+  return `<div class="game" role="button" tabindex="0" data-play="${esc(g.id)}" style="--c:${s.c}">
+    <button class="fav ${fav ? 'on' : ''}" data-fav="${esc(g.id)}" title="${fav ? 'Tirar dos favoritos' : 'Marcar como favorito'}" aria-label="Favorito"><span>${fav ? '❤️' : '🤍'}</span></button>
     ${isNew ? '<span class="badge-new">NOVO!</span>' : ''}
     <div class="art"><span>${esc(g.emoji || s.e)}</span></div>
     <div class="bd">
@@ -414,34 +510,41 @@ function gameCard(g) {
       ${g.desc ? `<small class="muted" style="font-weight:700">${esc(g.desc)}</small>` : ''}
       <div class="meta">${g.kind === 'quiz' ? starsHtml(p?.stars || 0) : `<span class="muted" style="font-weight:800">${p ? `🎮 jogado ${p.plays}x` : '🎮 aventura'}</span>`}
         <span class="chip">${p ? 'Jogar de novo' : 'Jogar'} ▶</span></div>
-    </div></button>`;
+    </div></div>`;
 }
 
 function renderHome() {
   const me = S.me, mission = dailyMission();
+  applyTheme(me.theme);
+  const favs = S.games.filter(g => (me.favorites || []).includes(g.id));
   const counts = {}; for (const g of S.games) counts[g.subject] = (counts[g.subject] || 0) + 1;
   const subjects = Object.keys(counts).sort();
-  if (S.filter !== 'Todas' && !counts[S.filter]) S.filter = 'Todas';
-  const list = S.games.filter(g => S.filter === 'Todas' || g.subject === S.filter);
+  if (S.filter === 'Favoritos' && !favs.length) S.filter = 'Todas';
+  if (!['Todas', 'Favoritos'].includes(S.filter) && !counts[S.filter]) S.filter = 'Todas';
+  const list = S.filter === 'Favoritos' ? favs : S.games.filter(g => S.filter === 'Todas' || g.subject === S.filter);
   const isAdm = me.role === 'admin';
   app.innerHTML = `<div class="wrap">
     <div class="brandbar"><div class="logo">🦉 ${esc(S.family.name)}</div><div class="sp"></div>
-      ${me.canCreate ? `<button class="btn small" id="bFactory">🏭 <span>Fábrica de jogos</span></button>` : ''}
-      ${isAdm ? `<button class="btn small sun" id="bAdmin">⚙️ <span>Painel do responsável</span></button>` : ''}
+      ${me.canCreate ? `<button class="btn small" id="bFactory">🏭 <span class="lbl">Fábrica de jogos</span></button>` : ''}
+      ${isAdm ? `<button class="btn small sun" id="bAdmin">⚙️ <span class="lbl">Painel do responsável</span></button>` : ''}
+      <button class="icon-btn" id="bMine" title="Minha central">🎨</button>
       <button class="icon-btn" id="bSound" title="Som">${soundOn ? '🔊' : '🔈'}</button>
       <button class="icon-btn" id="bOut" title="Sair">🚪</button></div>
     <div class="top">
       <div class="hello"><button class="big-avatar" id="bAvatar" title="Trocar avatar">${esc(me.avatar)}</button>
-        <div><h1>${greeting()}, ${esc(me.name)}!</h1><p>Pronto para aprender brincando? 🎉</p></div></div>
+        <div><h1>${greeting()}, ${esc(me.name.split(' ')[0])}!</h1><p>Pronto para aprender brincando? 🎉</p></div></div>
       <div class="starbox"><span class="s">⭐</span> ${S.stars} <small class="muted" style="font-size:14px;font-family:Nunito">estrelas</small></div>
     </div>
     ${mission ? `<div class="mission"><div class="em">${esc(mission.emoji || subj(mission.subject).e)}</div>
       <div><small style="font-weight:900;letter-spacing:.08em;opacity:.85">🎯 MISSÃO DO DIA</small><h2>${esc(mission.title)}</h2>
       <p>${S.progress[mission.id]?.stars === 3 ? 'Você já é craque! Jogue de novo para treinar.' : 'Complete e ganhe até 3 estrelas!'}</p></div>
       <button class="btn sun big" data-play="${esc(mission.id)}">Bora! 🚀</button></div>` : ''}
+    ${favs.length ? `<h2 class="section-title">❤️ Meus favoritos</h2><div class="games">${favs.map(gameCard).join('')}</div>`
+      : (S.games.length ? `<div class="empty" style="margin-top:18px;padding:16px">💡 Toque no 🤍 de um jogo para guardar nos seus <b>favoritos</b>!</div>` : '')}
     <h2 class="section-title">🎮 Meus jogos</h2>
     ${S.games.length ? `<div class="subjects">
       <button class="subj ${S.filter === 'Todas' ? 'sel' : ''}" data-f="Todas" style="--c:var(--primary)">🌈 Todas <span class="n">${S.games.length}</span></button>
+      ${favs.length ? `<button class="subj ${S.filter === 'Favoritos' ? 'sel' : ''}" data-f="Favoritos" style="--c:#e11d48">❤️ Favoritos <span class="n">${favs.length}</span></button>` : ''}
       ${subjects.map(s => `<button class="subj ${S.filter === s ? 'sel' : ''}" data-f="${esc(s)}" style="--c:${subj(s).c}">${subj(s).e} ${esc(s)} <span class="n">${counts[s]}</span></button>`).join('')}
     </div>
     <div class="games">${list.map(gameCard).join('')}</div>`
@@ -449,20 +552,41 @@ function renderHome() {
     <h2 class="section-title">🏆 Minhas medalhas</h2>
     <div class="trophies">${trophies().map(t => `<div class="trophy ${t.ok ? '' : 'locked'}"><div class="e">${t.e}</div><b>${t.t}</b><small>${t.ok ? 'Conquistada!' : t.d}</small></div>`).join('')}</div>
   </div>`;
-  $$('[data-play]').forEach(b => b.onclick = () => play(b.dataset.play));
+  $$('[data-fav]').forEach(b => b.onclick = (e) => { e.stopPropagation(); toggleFav(b.dataset.fav); });
+  $$('[data-play]').forEach(b => { b.onclick = () => play(b.dataset.play); b.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); play(b.dataset.play); } }; });
   $$('[data-f]').forEach(b => b.onclick = () => { S.filter = b.dataset.f; renderHome(); });
   $('#bSound').onclick = () => { soundOn = !soundOn; store.set('cf-sound', soundOn ? 'on' : 'off'); renderHome(); if (soundOn) sndOk(); };
   $('#bOut').onclick = async () => { if (await confirmBox('Sair?', 'Você vai precisar do código para entrar de novo.', 'Sair')) { await api('/api/logout', { method: 'POST' }); boot(); } };
-  $('#bAvatar').onclick = pickAvatar;
+  $('#bAvatar').onclick = pickAvatar; $('#bMine').onclick = pickAvatar;
   $('#bAdmin') && ($('#bAdmin').onclick = () => openAdmin());
   $('#bFactory') && ($('#bFactory').onclick = () => openFactory());
 }
 
+async function toggleFav(id) {
+  const favs = new Set(S.me.favorites || []);
+  const on = !favs.has(id);
+  on ? favs.add(id) : favs.delete(id);
+  S.me.favorites = [...favs]; renderHome();
+  if (on) { beep([[784, .1], [1046, .16]]); toast('❤️ Guardado nos favoritos!'); }
+  try { const r = await api('/api/me', { method: 'PATCH', body: { favorites: S.me.favorites } }); S.me.favorites = r.me.favorites; }
+  catch (e) { toast('⚠️ ' + e.message); }
+}
 function pickAvatar() {
-  modal({ title: 'Escolha seu avatar', body: `<div class="avatar-pick">${AVATARS.map(a => `<button type="button" data-a="${a}" class="${a === S.me.avatar ? 'sel' : ''}">${a}</button>`).join('')}</div>`,
-    actions: [{ label: 'Fechar', cls: 'ghost' }],
-    onOpen: (el, close) => { $('.avatar-pick', el).onclick = async (e) => { const b = e.target.closest('button'); if (!b) return;
-      await api('/api/me', { method: 'PATCH', body: { avatar: b.dataset.a } }); S.me.avatar = b.dataset.a; close(); renderHome(); sndOk(); }; } });
+  let av = S.me.avatar, th = S.me.theme || 'roxo';
+  modal({ title: '🎨 Minha central', body: `
+    <div style="font-weight:900;color:var(--ink2)">Escolha seu avatar</div>
+    <div class="avatar-pick" id="mAv">${AVATARS.map(a => `<button type="button" data-a="${a}" class="${a === av ? 'sel' : ''}">${a}</button>`).join('')}</div>
+    <div style="font-weight:900;color:var(--ink2);margin-top:6px">Sua cor favorita</div>
+    <div class="swatches" id="mTh">${Object.entries(THEMES).map(([k, t]) => `<button type="button" class="swatch ${k === th ? 'sel' : ''}" data-t="${k}" style="background:${t.g}"><b>${t.e}</b>${t.l}</button>`).join('')}</div>`,
+    actions: [{ label: 'Cancelar', cls: 'ghost', onClick: () => applyTheme(S.me.theme) }, { label: 'Salvar ✨', cls: 'primary', onClick: async () => {
+      try { const r = await api('/api/me', { method: 'PATCH', body: { avatar: av, theme: th } }); Object.assign(S.me, { avatar: r.me.avatar, theme: r.me.theme }); renderHome(); sndOk(); confetti(60); }
+      catch (e) { toast('⚠️ ' + e.message); return true; }
+    } }],
+    onOpen: (el) => {
+      el.addEventListener('click', (e) => { if (e.target === el) applyTheme(S.me.theme); });
+      $('#mAv', el).onclick = (e) => { const b = e.target.closest('button'); if (!b) return; av = b.dataset.a; $$('#mAv button', el).forEach(x => x.classList.toggle('sel', x === b)); };
+      $('#mTh', el).onclick = (e) => { const b = e.target.closest('button'); if (!b) return; th = b.dataset.t; $$('#mTh button', el).forEach(x => x.classList.toggle('sel', x === b)); applyTheme(th); };
+    } });
 }
 
 // ------------------------------------------------------------ jogar

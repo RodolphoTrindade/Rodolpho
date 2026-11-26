@@ -15,6 +15,7 @@ const BUILTIN_DIR = path.join(__dirname, 'jogos');
 const AI_KEY = process.env.ANTHROPIC_API_KEY || '';
 const AI_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-5-5';
 const SESSION_DAYS = 180;
+const THEMES = ['roxo', 'azul', 'verde', 'laranja', 'rosa', 'vermelho', 'amarelo', 'espaco'];
 
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
@@ -165,7 +166,8 @@ const isAdmin = (u) => u && u.role === 'admin';
 const canCreate = (u) => u && (u.role === 'admin' || u.canCreate);
 function publicUser(u) {
   return { id: u.id, name: u.name, avatar: u.avatar, role: u.role, canCreate: !!u.canCreate || u.role === 'admin',
-    disabled: !!u.disabled, lastLogin: u.lastLogin || null, createdAt: u.createdAt, hasPassword: !!u.pwd };
+    disabled: !!u.disabled, lastLogin: u.lastLogin || null, createdAt: u.createdAt, hasPassword: !!u.pwd,
+    favorites: Array.isArray(u.favorites) ? u.favorites : [], theme: u.theme || 'roxo', grade: u.grade || '' };
 }
 function canSee(u, g) {
   if (isAdmin(u)) return true;
@@ -337,6 +339,8 @@ async function api(req, res, p, url) {
   if (p === '/api/me' && m === 'PATCH') {
     const b = await readJson(req);
     if (b.avatar) me.avatar = clean(b.avatar, 8);
+    if (b.theme && THEMES.includes(b.theme)) me.theme = b.theme;
+    if (Array.isArray(b.favorites)) me.favorites = [...new Set(b.favorites.filter(id => data.games.some(g => g.id === id && canSee(me, g))))].slice(0, 60);
     save();
     return send(res, 200, { ok: true, me: publicUser(me) });
   }
