@@ -514,3 +514,12 @@ server.listen(PORT, () => {
   console.log(`IA para criar jogos: ${AI_KEY ? 'ligada (' + AI_MODEL + ')' : 'desligada (defina ANTHROPIC_API_KEY)'}`);
   if (!data.users.some(u => u.role === 'admin')) console.log('Primeiro acesso: abra o site e crie a conta do responsável.');
 });
+
+// desligamento limpo (Railway envia SIGTERM ao trocar de versão): grava dados pendentes e sai sem erro
+for (const sig of ['SIGTERM', 'SIGINT']) {
+  process.on(sig, () => {
+    try { save(true); } catch (e) { console.error('Erro ao salvar no desligamento', e); }
+    server.close(() => process.exit(0));
+    setTimeout(() => process.exit(0), 3000).unref();
+  });
+}
