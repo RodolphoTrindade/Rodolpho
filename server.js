@@ -46,10 +46,13 @@ const BUILTIN_GAMES = [
     ] } }
 ];
 
+const INVITE = String(process.env.CONVITE || '').trim();
 function blankData() {
-  return { version: 2, family: { name: 'Central Família' }, secret: crypto.randomBytes(32).toString('hex'),
-    users: [], sessions: {}, games: BUILTIN_GAMES.map(g => ({ ...g, builtin: true, assign: 'all', hidden: false, createdAt: new Date().toISOString() })),
-    progress: {} };
+  return { version: 3, secret: crypto.randomBytes(32).toString('hex'), families: [], users: [], sessions: {}, games: [], progress: {} };
+}
+// cada família recebe a sua própria cópia dos jogos que já vêm prontos
+function builtinFor(familyId, keepId) {
+  return BUILTIN_GAMES.map(g => ({ ...g, id: keepId ? g.id : `${g.id}-${familyId}`, base: g.id, familyId, builtin: true, assign: 'all', hidden: false, createdAt: new Date().toISOString() }));
 }
 
 // Reinício dos dados: defina RESET_ID no Railway (ex.: RESET_ID=2026-11-26). Na subida, se o valor for novo,
@@ -73,12 +76,19 @@ let data;
 function loadData() {
   try {
     const d = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
-    if (d && d.version === 2) {
-      // garante que jogos internos novos apareçam após atualizações
-      for (const g of BUILTIN_GAMES) {
-        const ex = d.games.find(x => x.id === g.id);
-        if (!ex) d.games.push({ ...g, builtin: true, assign: 'all', hidden: false, createdAt: new Date().toISOString() });
-        else if (ex.builtin) Object.assign(ex, { src: g.src, kind: g.kind, quiz: g.quiz || ex.quiz });
+    if (d && d.version === 2) { // central de uma família só -> várias famílias
+      const f = { id: crypto.randomBytes(6).toString('base64url'), name: (d.family && d.family.name) || 'Central Família', createdAt: new Date().toISOString() };
+      d.families = [f];
+      d.users.forEach(u => { u.familyId = f.id; });
+      d.games.forEach(g => { g.familyId = f.id; if (g.builtin) g.base = g.id; });
+      delete d.family; d.version = 3;
+    }
+    if (d && d.version === 3) {
+      // garante que jogos internos novos apareçam após atualizações, em cada família
+      for (const f of d.families) for (const g of BUILTIN_GAMES) {
+        const ex = d.games.find(x => x.familyId === f.id && x.builtin && x.base === g.id);
+        if (!ex) d.games.push(...builtinFor(f.id).filter(x => x.base === g.id));
+        else Object.assign(ex, { src: g.src, kind: g.kind, quiz: g.quiz || ex.quiz });
       }
       return d;
     }
@@ -184,9 +194,14 @@ const canCreate = (u) => u && (u.role === 'admin' || u.canCreate);
 function publicUser(u) {
   return { id: u.id, name: u.name, avatar: u.avatar, role: u.role, canCreate: !!u.canCreate || u.role === 'admin',
     disabled: !!u.disabled, lastLogin: u.lastLogin || null, createdAt: u.createdAt, hasPassword: !!u.pwd,
-    favorites: Array.isArray(u.favorites) ? u.favorites : [], theme: u.theme || 'roxo', grade: u.grade || '' };
+    favorites: Array.isArray(u.favorites) ? u.favorites : [], theme: u.theme || 'roxo', grade: u.grade || '', login: u.login || '' };
 }
+const famOf = (u) => data.families.find(f => f.id === u.familyId) || { name: 'Central Família' };
+const famUsers = (u) => data.users.filter(x => x.familyId === u.familyId);
+const famGames = (u) => data.games.filter(x => x.familyId === u.familyId);
+const normLogin = (s) => String(s || '').trim().toLowerCase().slice(0, 60);
 function canSee(u, g) {
+  if (g.familyId !== u.familyId) return false;
   if (isAdmin(u)) return true;
   if (g.hidden) return false;
   if (g.createdBy === u.id) return true;
@@ -280,21 +295,24 @@ async function api(req, res, p, url) {
   if (p === '/api/health') return send(res, 200, { ok: true });
 
   if (p === '/api/state' && m === 'GET') {
-    return send(res, 200, { setupNeeded: !data.users.some(u => u.role === 'admin'), family: data.family,
-      me: me ? publicUser(me) : null, ai: !!AI_KEY });
+    return send(res, 200, { family: me ? famOf(me) : { name: 'Central Família' }, me: me ? publicUser(me) : null, ai: !!AI_KEY, convite: !!INVITE });
   }
 
+  // cadastro aberto: cada responsável cria a central da sua própria família
   if (p === '/api/setup' && m === 'POST') {
-    if (data.users.some(u => u.role === 'admin')) return send(res, 409, { error: 'A central já foi configurada.' });
     if (limited(req)) return send(res, 429, { error: 'Muitas tentativas. Espere alguns minutos.' });
     const b = await readJson(req);
-    const name = clean(b.name, 40), pw = String(b.password || '');
+    if (INVITE && clean(b.invite, 80).toLowerCase() !== INVITE.toLowerCase()) return send(res, 403, { error: 'Código de convite inválido.' });
+    const name = clean(b.name, 40), pw = String(b.password || ''), login = normLogin(b.login);
     if (!name) return send(res, 400, { error: 'Informe seu nome.' });
+    if (login.length < 3) return send(res, 400, { error: 'Escolha um usuário ou e-mail para entrar (mínimo 3 letras).' });
+    if (data.users.some(x => x.login === login)) return send(res, 409, { error: 'Esse usuário já existe. Escolha outro.' });
     if (pw.length < 8) return send(res, 400, { error: 'A senha precisa ter pelo menos 8 caracteres.' });
-    if (b.familyName) data.family.name = clean(b.familyName, 60);
-    const u = { id: uid(), name, avatar: clean(b.avatar, 8) || '🦉', role: 'admin', canCreate: true, pwd: hashPassword(pw), createdAt: new Date().toISOString() };
+    const fam = { id: uid(6), name: clean(b.familyName, 60) || 'Central Família', createdAt: new Date().toISOString() };
+    data.families.push(fam);
+    data.games.push(...builtinFor(fam.id));
+    const u = { id: uid(), familyId: fam.id, login, name, avatar: clean(b.avatar, 8) || '🦉', role: 'admin', canCreate: true, pwd: hashPassword(pw), createdAt: new Date().toISOString() };
     data.users.push(u);
-    // jogos internos ficam “criados” pelo primeiro responsável
     startSession(req, res, u);
     save(true);
     return send(res, 200, { ok: true, me: publicUser(u) });
@@ -304,12 +322,19 @@ async function api(req, res, p, url) {
     if (limited(req)) return send(res, 429, { error: 'Muitas tentativas. Espere alguns minutos e tente de novo.' });
     const b = await readJson(req);
     const raw = String(b.code || '').trim();
-    if (!raw) return send(res, 400, { error: 'Digite seu código.' });
+    if (!raw) return send(res, 400, { error: 'Digite seu código ou sua senha.' });
     let user = null;
-    const key = hmac(normCode(raw));
-    user = data.users.find(u => u.codeKey && u.codeKey === key && !u.disabled);
-    if (!user) for (const u of data.users) if (u.pwd && !u.disabled && checkPassword(raw, u.pwd)) { user = u; break; }
-    if (!user) return send(res, 401, { error: 'Código não encontrado. Confira e tente de novo.' });
+    const lg = normLogin(b.login);
+    if (lg) { // responsável: usuário + senha
+      const u = data.users.find(x => x.login === lg && x.pwd && !x.disabled);
+      if (u && checkPassword(raw, u.pwd)) user = u;
+      if (!user) return send(res, 401, { error: 'Usuário ou senha incorretos.' });
+    } else {
+      const key = hmac(normCode(raw));
+      user = data.users.find(u => u.codeKey && u.codeKey === key && !u.disabled);
+      if (!user) for (const u of data.users) if (u.pwd && !u.login && !u.disabled && checkPassword(raw, u.pwd)) { user = u; break; } // contas antigas sem usuário
+      if (!user) return send(res, 401, { error: 'Código não encontrado. Confira e tente de novo.' });
+    }
     startSession(req, res, user);
     return send(res, 200, { ok: true, me: publicUser(user) });
   }
@@ -325,8 +350,8 @@ async function api(req, res, p, url) {
 
   // ---------- criança / qualquer usuário
   if (p === '/api/home' && m === 'GET') {
-    const games = data.games.filter(g => canSee(me, g)).map(gameSummary);
-    return send(res, 200, { me: publicUser(me), family: data.family, games, progress: data.progress[me.id] || {}, stars: starsOf(me.id), ai: !!AI_KEY });
+    const games = famGames(me).filter(g => canSee(me, g)).map(gameSummary);
+    return send(res, 200, { me: publicUser(me), family: famOf(me), games, progress: data.progress[me.id] || {}, stars: starsOf(me.id), ai: !!AI_KEY });
   }
 
   let mm;
@@ -376,8 +401,8 @@ async function api(req, res, p, url) {
     if (!canCreate(me)) return send(res, 403, { error: 'Sem permissão para criar jogos.' });
     const b = await readJson(req, 8 * 1024 * 1024);
     const g = { id: 'j-' + uid(6), title: clean(b.title, 100) || 'Novo jogo', subject: clean(b.subject, 40) || 'Outra', emoji: clean(b.emoji, 8) || '🎯',
-      desc: clean(b.desc, 300), grade: clean(b.grade, 60), createdBy: me.id, createdAt: new Date().toISOString(), hidden: false,
-      assign: isAdmin(me) ? normAssign(b.assign) : 'all' };
+      desc: clean(b.desc, 300), grade: clean(b.grade, 60), familyId: me.familyId, createdBy: me.id, createdAt: new Date().toISOString(), hidden: false,
+      assign: isAdmin(me) ? normAssign(b.assign, me) : 'all' };
     if (b.kind === 'html') {
       if (!isAdmin(me)) return send(res, 403, { error: 'Só o responsável pode enviar jogos prontos.' });
       const html = String(b.html || '');
@@ -395,7 +420,7 @@ async function api(req, res, p, url) {
   }
 
   if ((mm = /^\/api\/games\/([\w-]+)$/.exec(p)) && (m === 'PATCH' || m === 'DELETE')) {
-    const g = data.games.find(x => x.id === mm[1]);
+    const g = data.games.find(x => x.id === mm[1] && x.familyId === me.familyId);
     if (!g) return send(res, 404, { error: 'Jogo não encontrado.' });
     if (!isAdmin(me) && g.createdBy !== me.id) return send(res, 403, { error: 'Sem permissão.' });
     if (m === 'DELETE') {
@@ -406,7 +431,7 @@ async function api(req, res, p, url) {
     const b = await readJson(req, 8 * 1024 * 1024);
     for (const k of ['title', 'subject', 'emoji', 'desc', 'grade']) if (k in b) g[k] = clean(b[k], k === 'desc' ? 300 : 100);
     if ('hidden' in b && isAdmin(me)) g.hidden = !!b.hidden;
-    if ('assign' in b && isAdmin(me)) g.assign = normAssign(b.assign);
+    if ('assign' in b && isAdmin(me)) g.assign = normAssign(b.assign, me);
     if (b.quiz && g.kind === 'quiz') {
       const quiz = sanitizeQuiz(b.quiz);
       if (!quiz.questions.length) return send(res, 400, { error: 'Adicione pelo menos uma pergunta completa.' });
@@ -420,14 +445,17 @@ async function api(req, res, p, url) {
   if (!isAdmin(me)) return send(res, 403, { error: 'Área do responsável.' });
 
   if (p === '/api/admin/overview' && m === 'GET') {
-    return send(res, 200, { family: data.family, ai: !!AI_KEY, users: data.users.map(u => ({ ...publicUser(u), stars: starsOf(u.id) })),
-      games: data.games.map(gameSummary), progress: data.progress });
+    const us = famUsers(me), prog = {};
+    for (const u of us) if (data.progress[u.id]) prog[u.id] = data.progress[u.id];
+    return send(res, 200, { family: famOf(me), ai: !!AI_KEY, users: us.map(u => ({ ...publicUser(u), stars: starsOf(u.id) })),
+      games: famGames(me).map(gameSummary), progress: prog });
   }
 
   if (p === '/api/admin/family' && m === 'PATCH') {
     const b = await readJson(req);
-    if (b.name) data.family.name = clean(b.name, 60);
-    save(); return send(res, 200, { ok: true, family: data.family });
+    const f = data.families.find(x => x.id === me.familyId);
+    if (f && b.name) f.name = clean(b.name, 60);
+    save(); return send(res, 200, { ok: true, family: famOf(me) });
   }
 
   if (p === '/api/admin/users' && m === 'POST') {
@@ -435,7 +463,7 @@ async function api(req, res, p, url) {
     const name = clean(b.name, 40);
     if (!name) return send(res, 400, { error: 'Informe o nome.' });
     const role = b.role === 'admin' ? 'admin' : 'aluno';
-    const u = { id: uid(), name, avatar: clean(b.avatar, 8) || '🦁', role, canCreate: role === 'admin' || !!b.canCreate, grade: clean(b.grade, 60), createdAt: new Date().toISOString(), createdBy: me.id };
+    const u = { id: uid(), familyId: me.familyId, name, avatar: clean(b.avatar, 8) || '🦁', role, canCreate: role === 'admin' || !!b.canCreate, grade: clean(b.grade, 60), createdAt: new Date().toISOString(), createdBy: me.id };
     const { code, key } = newKidCode();
     u.codeKey = key;
     data.users.push(u); save();
@@ -443,7 +471,7 @@ async function api(req, res, p, url) {
   }
 
   if ((mm = /^\/api\/admin\/users\/([\w-]+)(\/code)?$/.exec(p))) {
-    const u = data.users.find(x => x.id === mm[1]);
+    const u = data.users.find(x => x.id === mm[1] && x.familyId === me.familyId);
     if (!u) return send(res, 404, { error: 'Pessoa não encontrada.' });
     if (mm[2] && m === 'POST') {
       const { code, key } = newKidCode();
@@ -471,6 +499,12 @@ async function api(req, res, p, url) {
       }
       if (b.role && u.id !== me.id) u.role = b.role === 'admin' ? 'admin' : 'aluno';
       if (u.role === 'admin') u.canCreate = true;
+      if (b.login !== undefined && u.id === me.id) {
+        const lg = normLogin(b.login);
+        if (lg.length < 3) return send(res, 400, { error: 'O usuário precisa ter pelo menos 3 letras.' });
+        if (data.users.some(x => x.login === lg && x.id !== u.id)) return send(res, 409, { error: 'Esse usuário já existe. Escolha outro.' });
+        u.login = lg;
+      }
       if (b.password) {
         if (u.id !== me.id) return send(res, 403, { error: 'Cada responsável troca a própria senha.' });
         if (String(b.password).length < 8) return send(res, 400, { error: 'A senha precisa ter pelo menos 8 caracteres.' });
@@ -482,8 +516,8 @@ async function api(req, res, p, url) {
 
   return send(res, 404, { error: 'Não encontrado.' });
 }
-function normAssign(a) {
-  if (Array.isArray(a)) return a.filter(id => data.users.some(u => u.id === id));
+function normAssign(a, me) {
+  if (Array.isArray(a)) return a.filter(id => data.users.some(u => u.id === id && u.familyId === me.familyId));
   return 'all';
 }
 
@@ -509,7 +543,7 @@ const server = http.createServer(async (req, res) => {
       const me = currentUser(req);
       if (!me) { res.writeHead(302, { Location: '/' }); return res.end(); }
       const src = `/${mm[1]}/${mm[2]}`;
-      const g = data.games.find(x => x.src === src);
+      const g = data.games.find(x => x.src === src && x.familyId === me.familyId);
       if (!g || !canSee(me, g)) return send(res, 404, 'Jogo não encontrado', 'text/plain; charset=utf-8');
       const file = inside(mm[1] === 'jogos' ? BUILTIN_DIR : UPLOAD_DIR, mm[2]);
       if (!file || !fs.existsSync(file)) return send(res, 404, 'Jogo não encontrado', 'text/plain; charset=utf-8');
@@ -535,7 +569,7 @@ server.listen(PORT, () => {
   console.log(`Central Família rodando na porta ${PORT}`);
   console.log(`Dados em: ${DATA_FILE}`);
   console.log(`IA para criar jogos: ${AI_KEY ? 'ligada (' + AI_MODEL + ')' : 'desligada (defina ANTHROPIC_API_KEY)'}`);
-  if (!data.users.some(u => u.role === 'admin')) console.log('Primeiro acesso: abra o site e crie a conta do responsável.');
+  console.log(`Cadastro de novas famílias: ${INVITE ? 'com código de convite (CONVITE)' : 'aberto'}`);
 });
 
 // desligamento limpo (Railway envia SIGTERM ao trocar de versão): grava dados pendentes e sai sem erro

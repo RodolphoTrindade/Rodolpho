@@ -411,9 +411,9 @@ async function boot() {
   }
   let st;
   try { st = await api('/api/state'); } catch { app.innerHTML = `<div class="center-screen"><div class="login-card"><div class="mascot">😴</div><h2>Sem conexão</h2><p class="muted">Confira a internet e tente de novo.</p><button class="btn primary big" onclick="location.reload()">Tentar de novo</button></div></div>`; return; }
-  S.family = st.family; S.ai = st.ai;
+  S.family = st.family; S.ai = st.ai; S.convite = st.convite;
   document.title = st.family.name;
-  if (st.setupNeeded) return renderSetup();
+  if (!st.me && new URLSearchParams(location.search).has('cadastro')) return renderSetup();
   if (!st.me) return renderLogin();
   await loadHome();
 }
@@ -424,21 +424,24 @@ function renderSetup() {
   app.innerHTML = `<div class="center-screen"><form class="login-card" id="setupForm">
     <div class="mascot">🦉</div>
     <h1 style="font-size:32px">Vamos começar!</h1>
-    <p class="muted" style="margin:0;font-weight:700">Crie a conta do responsável. Depois você dá acesso para as crianças.</p>
+    <p class="muted" style="margin:0;font-weight:700">Crie a central da sua família. Depois você dá acesso para as crianças.</p>
+    ${S.convite ? `<label class="f" style="text-align:left">Código de convite<input type="text" id="sInv" autocomplete="off" required></label>` : ''}
     <label class="f" style="text-align:left">Nome da central<input type="text" id="sFam" value="Central Família" maxlength="60"></label>
     <label class="f" style="text-align:left">Seu nome<input type="text" id="sName" placeholder="Ex.: Rodolpho" maxlength="40" required></label>
     <div class="avatar-pick" id="sAv">${AVATARS.slice(0, 12).map(a => `<button type="button" data-a="${a}" class="${a === avatar ? 'sel' : ''}">${a}</button>`).join('')}</div>
+    <label class="f" style="text-align:left">Usuário ou e-mail para entrar<input type="text" id="sLogin" autocomplete="username" autocapitalize="none" spellcheck="false" minlength="3" required></label>
     <label class="f" style="text-align:left">Crie uma senha (mínimo 8 caracteres)<input type="password" id="sPw" autocomplete="new-password" minlength="8" required></label>
     <label class="f" style="text-align:left">Repita a senha<input type="password" id="sPw2" autocomplete="new-password" required></label>
     <div class="err" id="sErr"></div>
     <button class="btn primary big">Criar minha central ✨</button>
+    <a href="/" style="font-weight:800;color:var(--primary)">Já tenho conta</a>
   </form></div>`;
   $('#sAv').onclick = (e) => { const b = e.target.closest('button'); if (!b) return; avatar = b.dataset.a; $$('#sAv button').forEach(x => x.classList.toggle('sel', x === b)); };
   $('#setupForm').onsubmit = async (e) => {
     e.preventDefault();
     if ($('#sPw').value !== $('#sPw2').value) return $('#sErr').textContent = 'As senhas não são iguais.';
     try {
-      await api('/api/setup', { method: 'POST', body: { familyName: $('#sFam').value, name: $('#sName').value, avatar, password: $('#sPw').value } });
+      await api('/api/setup', { method: 'POST', body: { familyName: $('#sFam').value, name: $('#sName').value, avatar, login: $('#sLogin').value, password: $('#sPw').value, invite: $('#sInv') ? $('#sInv').value : '' } });
       confetti(); await loadHome(); setTimeout(() => openAdmin('pessoas'), 600);
     } catch (err) { $('#sErr').textContent = err.message; }
   };
@@ -456,17 +459,19 @@ function renderLogin(msg = '', prefill = '', modo) {
       <button type="button" class="btn small ${resp ? 'primary' : ''}" id="tResp">🧑 Sou responsável</button>
     </div>
     <p class="muted" style="margin:0;font-weight:700">${resp ? 'Digite a <b>senha do responsável</b> para abrir o painel.' : 'Oi! Digite seu <b>código secreto</b> para entrar na aventura.'}</p>
-    ${resp ? `<input class="code-input" type="password" id="lCode" placeholder="Sua senha" autocomplete="current-password">`
+    ${resp ? `<input class="code-input" type="text" id="lLogin" placeholder="Usuário ou e-mail" autocomplete="username" autocapitalize="none" spellcheck="false" style="font-size:20px;letter-spacing:0;text-transform:none">
+           <input class="code-input" type="password" id="lCode" placeholder="Sua senha" autocomplete="current-password" style="font-size:20px;letter-spacing:0;text-transform:none">`
            : `<input class="code-input" id="lCode" placeholder="LEAO-AB12" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${esc(prefill)}">`}
     <div class="err" id="lErr">${esc(msg)}</div>
     <button class="btn primary big">Entrar 🚀</button>
+    <a href="/?cadastro" style="font-weight:800;color:var(--primary)">✨ Criar a central da minha família</a>
   </form></div>`;
-  const inp = $('#lCode'); setTimeout(() => inp.focus(), 50);
+  const inp = $('#lCode'); setTimeout(() => ($('#lLogin') || inp).focus(), 50);
   $('#tCri').onclick = () => renderLogin('', '', 'crianca');
   $('#tResp').onclick = () => renderLogin('', '', 'resp');
   $('#loginForm').onsubmit = async (e) => {
     e.preventDefault();
-    try { await api('/api/login', { method: 'POST', body: { code: inp.value } }); await loadHome(); }
+    try { await api('/api/login', { method: 'POST', body: { code: inp.value, login: $('#lLogin') ? $('#lLogin').value : '' } }); await loadHome(); }
     catch (err) { $('#lErr').textContent = err.message; inp.select(); }
   };
 }
@@ -805,7 +810,8 @@ function adminFamily() {
     ${A.ai ? '<div class="chip" style="background:#dcfce7;color:#166534">✅ Ligada — a Fábrica de jogos gera perguntas a partir de fotos e textos.</div>'
       : `<div class="chip" style="background:#fff3c4;color:#8a5a00">⚠️ Desligada</div>
       <small style="font-weight:700;color:var(--ink2)">Para a Fábrica criar jogos sozinha a partir de fotos do caderno, crie uma chave em <b>console.anthropic.com</b> e adicione no Railway a variável <b>ANTHROPIC_API_KEY</b>. Enquanto isso, dá para montar jogos à mão.</small>`}</div>
-    <div class="panel"><h3 style="font-size:22px">🔒 Minha senha</h3>
+    <div class="panel"><h3 style="font-size:22px">🔒 Minha conta</h3>
+    <div class="row" style="margin-bottom:8px"><input type="text" id="fLogin" value="${esc(S.me.login || '')}" placeholder="Usuário ou e-mail para entrar" autocapitalize="none" spellcheck="false" style="flex:1"><button class="btn" data-act="saveLogin">Salvar usuário</button></div>
     <div class="row"><input type="password" id="fPw" placeholder="Nova senha (mín. 8)" autocomplete="new-password" style="flex:1"><button class="btn" data-act="savePw">Trocar senha</button></div></div>`;
 }
 function showCode(u, code) {
@@ -869,6 +875,7 @@ function bindAdmin(body) {
       }
       if (act === 'access') { const g = A.games.find(x => x.id === id); accessDialog(g.assign, async (assign) => { await api('/api/games/' + id, { method: 'PATCH', body: { assign } }); openAdmin(); }); }
       if (act === 'saveFam') { await api('/api/admin/family', { method: 'PATCH', body: { name: $('#fName').value } }); toast('Salvo ✅'); S.family.name = $('#fName').value; openAdmin(); }
+      if (act === 'saveLogin') { const r = await api('/api/admin/users/' + S.me.id, { method: 'PATCH', body: { login: $('#fLogin').value } }); S.me.login = r.user.login; toast('Usuário salvo ✅'); }
       if (act === 'savePw') { await api('/api/admin/users/' + S.me.id, { method: 'PATCH', body: { password: $('#fPw').value } }); $('#fPw').value = ''; toast('Senha trocada 🔒'); }
     } catch (err) { toast('⚠️ ' + err.message, 3500); }
   };

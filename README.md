@@ -28,3 +28,11 @@ Em `jogos/`: Missão Português, Missão Matemática e Missão Inglês do Samuel
 ```bash
 npm start   # http://localhost:3000
 ```
+
+## Várias famílias
+
+Cada responsável cria a própria central em `/?cadastro` (usuário + senha) e tem crianças, jogos e painel separados das outras famílias.
+Responsável entra com **usuário e senha**; criança entra com o **código secreto**.
+
+- `CONVITE` (opcional): se definida no Railway, o cadastro de uma nova família exige esse código.
+- `RESET_ID` (opcional): ao mudar o valor, os dados atuais viram uma cópia de segurança e tudo recomeça do zero.
