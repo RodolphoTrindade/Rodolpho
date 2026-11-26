@@ -1,59 +1,26 @@
-# 🎛️ Central Rodolpho
+# 🦉 Central Família
 
-Uma tela única para controlar tudo: atalhos para sistemas e sites organizados por categoria, abertos **dentro da própria central em abas**, verificação de status (no ar / fora do ar), tarefas e notas rápidas. Sem dependências — só Node.js.
+Central de estudos para crianças: jogos educativos, estrelas, medalhas, missão do dia e uma **Fábrica de jogos**, que monta um jogo novo a partir das fotos ou do texto da matéria. Sem dependências, só Node.js.
 
-## Subir no GitHub
+## Como funciona
 
-Envie todos os arquivos desta pasta para a raiz do repositório `RodolphoTrindade/Rodolpho`:
+- **Primeiro acesso:** quem abrir o site primeiro cria a conta do **responsável** (nome e senha). Faça isso logo depois do deploy.
+- **Dar acesso a outras crianças:** em *Painel do responsável → Pessoas → Dar acesso a alguém*. Cada criança recebe um **código secreto** (ex.: `LEAO-AB12`) e um **link de acesso**: com o link, ela entra direto e fica conectada naquele aparelho.
+- **Quem joga o quê:** em *Jogos → Quem joga*, libere cada jogo para todos ou só para algumas crianças.
+- **Progresso:** estrelas, melhor nota, quantas vezes jogou e quando.
+- **Fábrica de jogos:** envie fotos do caderno ou do livro e/ou o texto da matéria → **Criar jogo com IA** → revise as perguntas → teste → salve. Também dá para montar o jogo à mão ou enviar um jogo pronto (`.html`). Contas de Matemática mostram a conta armada como apoio.
 
-```
-package.json
-server.js
-default-data.json
-railway.json
-.gitignore
-public/index.html
-```
+## Variáveis no Railway
 
-Pelo site: abra o repositório → **Add file → Upload files** → arraste os arquivos e a pasta `public` → **Commit changes**.
+| Variável | Para quê |
+|---|---|
+| `DATA_DIR=/data` | Guardar dados no volume (monte um volume em `/data`) |
+| `ANTHROPIC_API_KEY` | Liga a criação de jogos com IA (chave em console.anthropic.com) |
+| `ANTHROPIC_MODEL` | Opcional. Modelo usado pela Fábrica (padrão `claude-sonnet-5-5`) |
 
-Ou pelo terminal:
+## Jogos que já vêm na central
 
-```bash
-git clone https://github.com/RodolphoTrindade/Rodolpho.git
-cd Rodolpho
-# copie os arquivos para cá
-git add .
-git commit -m "Central"
-git push
-```
-
-## Publicar no Railway
-
-1. Em **New Project → Deploy from GitHub repo**, escolha `RodolphoTrindade/Rodolpho`. O Railway detecta o Node e roda `npm start` sozinho.
-2. Em **Variables**, crie `CENTRAL_PASSWORD` com uma senha (recomendado: sem ela, qualquer pessoa com o link vê e edita a central).
-3. Para os dados **não se perderem a cada deploy**: clique com o botão direito no serviço → **Attach Volume**, monte em `/data` e crie a variável `DATA_DIR=/data`.
-4. Em **Settings → Networking → Generate Domain** para ganhar o link público.
-
-A cada `git push`, o Railway publica a nova versão automaticamente.
-
-## Jogos de estudo da família
-
-Os jogos ficam em `public/familia/` e abrem dentro da central (categoria **Família / Jogos de estudo**) ou direto pelo link:
-
-- `/familia/portugues.html` — Missão Português do Samuel
-- `/familia/matematica.html` — Missão Matemática do Samuel
-- `/familia/ingles.html` — Missão Inglês do Samuel
-
-Para incluir um jogo novo, coloque o `.html` nessa pasta e cadastre o link na central.
-
-## Usar
-
-- **＋ Adicionar**: cadastre qualquer sistema/site (nome, ícone, URL, categoria).
-- **Clique no card**: abre em uma aba dentro da central. Sites que bloqueiam isso (GitHub, Gmail, Outlook, Railway e a maioria dos sistemas com login) abrem em nova aba automaticamente.
-- **🩺 Status**: verifica quais sites estão no ar.
-- **⋯ → Exportar backup**: baixa tudo em `.json`; **Importar** restaura.
-- Tecla **/** foca a busca. Clique no título para renomear a central.
+Em `jogos/`: Missão Português, Missão Matemática e Missão Inglês do Samuel (jogos prontos), e o **Desafio da Tabuada** (quiz). Esses arquivos só abrem para quem fez login.
 
 ## Rodar localmente
 

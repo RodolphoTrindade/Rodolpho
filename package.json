@@ -1,7 +1,7 @@
 {
-  "name": "central-rodolpho",
+  "name": "central-familia",
   "version": "1.0.0",
-  "description": "Central única para controlar links, sistemas, tarefas e notas na mesma tela.",
+  "description": "Central Família: jogos de estudo para crianças, com acessos, progresso e Fábrica de jogos.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
