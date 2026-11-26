@@ -495,7 +495,13 @@ const server = http.createServer(async (req, res) => {
       const g = data.games.find(x => x.src === src);
       if (!g || !canSee(me, g)) return send(res, 404, 'Jogo não encontrado', 'text/plain; charset=utf-8');
       const file = inside(mm[1] === 'jogos' ? BUILTIN_DIR : UPLOAD_DIR, mm[2]);
-      return serveFile(res, file, { 'Cache-Control': 'no-store' });
+      if (!file || !fs.existsSync(file)) return send(res, 404, 'Jogo não encontrado', 'text/plain; charset=utf-8');
+      // injeta o corretor de voz e som em todos os jogos
+      let html = fs.readFileSync(file, 'utf8');
+      const tag = '<script src="/voz.js"></script>';
+      html = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, (h) => h + tag) : tag + html;
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
+      return res.end(html);
     }
 
     const file = inside(PUBLIC_DIR, p === '/' ? 'index.html' : p.slice(1));

@@ -288,6 +288,7 @@ table.prog th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-
 </style>
 </head>
 <body>
+<script src="/voz.js"></script>
 <canvas id="confetti"></canvas>
 <div id="app"><div class="center-screen"><div class="mascot">🦉</div></div></div>
 
@@ -364,8 +365,10 @@ let actx;
 function beep(notes, type = 'sine') {
   if (!soundOn) return;
   try {
-    actx ||= new (window.AudioContext || window.webkitAudioContext)();
-    let t = actx.currentTime;
+    actx = window.pegarAudio ? window.pegarAudio() : (actx || new (window.AudioContext || window.webkitAudioContext)());
+    if (!actx) return;
+    if (actx.state === 'suspended') actx.resume();
+    let t = actx.currentTime + .02;
     for (const [f, d] of notes) {
       const o = actx.createOscillator(), g = actx.createGain();
       o.type = type; o.frequency.value = f; g.gain.setValueAtTime(.18, t); g.gain.exponentialRampToValueAtTime(.001, t + d);
@@ -376,8 +379,11 @@ function beep(notes, type = 'sine') {
 const sndOk = () => beep([[660, .12], [880, .18]]);
 const sndNo = () => beep([[260, .18], [200, .25]], 'triangle');
 const sndWin = () => beep([[523, .14], [659, .14], [784, .14], [1046, .3]]);
+let avisouVoz = false;
 function speak(text, lang = 'pt-BR') {
-  try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = lang; u.rate = .92; speechSynthesis.speak(u); } catch {}
+  const ok = window.falarTexto ? window.falarTexto(text, lang) : false;
+  if (!ok) return toast('🔇 Este aparelho ou navegador não consegue ler em voz alta. Tente no Chrome ou no Safari.', 4000);
+  if (!avisouVoz && window.temVoz && !window.temVoz(lang)) { avisouVoz = true; toast(lang.startsWith('en') ? '🔈 Sem voz em inglês instalada neste aparelho: a leitura pode sair com sotaque.' : '🔈 Sem voz em português instalada neste aparelho: a leitura pode sair com sotaque.', 4500); }
 }
 function confetti(n = 140) {
   const cv = $('#confetti'), ctx = cv.getContext('2d');
