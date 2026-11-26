@@ -37,6 +37,16 @@ git push
 
 A cada `git push`, o Railway publica a nova versão automaticamente.
 
+## Jogos de estudo da família
+
+Os jogos ficam em `public/familia/` e abrem dentro da central (categoria **Família / Jogos de estudo**) ou direto pelo link:
+
+- `/familia/portugues.html` — Missão Português do Samuel
+- `/familia/matematica.html` — Missão Matemática do Samuel
+- `/familia/ingles.html` — Missão Inglês do Samuel
+
+Para incluir um jogo novo, coloque o `.html` nessa pasta e cadastre o link na central.
+
 ## Usar
 
 - **＋ Adicionar**: cadastre qualquer sistema/site (nome, ícone, URL, categoria).

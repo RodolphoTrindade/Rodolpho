@@ -1,0 +1,925 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Missão Português do Samuel</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* Layout: caderno pautado; mapa de ilhas em grade de adesivos; desafio em um cartão central */
+:root{
+  --bg:#EEF3FF; --paper:#FFFFFF; --ink:#1B2350; --muted:#59618C; --line:#D3DCF6; --rule:rgba(51,85,224,.07);
+  --blue:#3355E0; --sun:#F5B10A; --ok:#178F5B; --okbg:#E1F6EA; --bad:#D63A50; --badbg:#FDE6EA;
+  --w1:#3355E0; --w2:#E0662A; --w3:#8A4FD8; --w4:#D93D78; --w5:#178F5B; --w6:#0C8EA8; --w7:#4D7F12; --w8:#4B5A78;
+  --onaccent:#FFFFFF;
+  --display:"Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+  --body:"Nunito", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#10152C; --paper:#1A2145; --ink:#EEF1FF; --muted:#A9B1DA; --line:#2F3870; --rule:rgba(124,147,255,.06);
+  --blue:#7C93FF; --sun:#FFC94A; --ok:#4FD39A; --okbg:#143A2B; --bad:#FF7A8C; --badbg:#47202B;
+  --w1:#6F88FF; --w2:#FF8A4F; --w3:#B286FF; --w4:#FF6FA5; --w5:#3FC98C; --w6:#35C3DE; --w7:#9AD65C; --w8:#A9B9DD;
+  --onaccent:#10152C; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#10152C; --paper:#1A2145; --ink:#EEF1FF; --muted:#A9B1DA; --line:#2F3870; --rule:rgba(124,147,255,.06);
+  --blue:#7C93FF; --sun:#FFC94A; --ok:#4FD39A; --okbg:#143A2B; --bad:#FF7A8C; --badbg:#47202B;
+  --w1:#6F88FF; --w2:#FF8A4F; --w3:#B286FF; --w4:#FF6FA5; --w5:#3FC98C; --w6:#35C3DE; --w7:#9AD65C; --w8:#A9B9DD;
+  --onaccent:#10152C; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5;
+  background-image:repeating-linear-gradient(to bottom, transparent 0 31px, var(--rule) 31px 32px);}
+.wrap{max-width:780px;margin:0 auto;padding-block:18px 48px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));
+  display:flex;flex-direction:column;gap:18px}
+h1,h2,h3{font-family:var(--display);line-height:1.1;margin:0;text-wrap:balance}
+h1{font-size:2.1rem;font-weight:800}
+h2{font-size:1.6rem;font-weight:800}
+h3{font-size:1.2rem;font-weight:700}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,summary:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{background:var(--paper);border:2px solid var(--line);border-radius:999px;padding:4px 12px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.chip .s{color:var(--sun)}
+.sub{color:var(--muted);font-weight:700}
+.card{background:var(--paper);border:2px solid var(--line);border-bottom-width:5px;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.hello{display:flex;flex-direction:column;gap:6px}
+.exam{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:var(--onaccent);border-radius:12px;padding:6px 12px;font-weight:800;align-self:flex-start}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:560px){.grid{grid-template-columns:1fr}}
+.world{background:var(--paper);border:2px solid var(--line);border-bottom:6px solid var(--wc);border-radius:18px;padding:0;text-align:left;display:flex;flex-direction:column;overflow:hidden;transition:transform .12s}
+.world:hover{transform:translateY(-3px)}
+.world .glyph{background:var(--wc);color:var(--onaccent);font-family:var(--display);font-weight:800;font-size:1.9rem;padding:10px 16px;letter-spacing:.02em;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.world .glyph small{font-family:var(--body);font-size:.75rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;opacity:.9}
+.world .body{padding:12px 16px 14px;display:flex;flex-direction:column;gap:4px}
+.world .desc{color:var(--muted);font-size:.95rem}
+.stars{font-size:1.3rem;letter-spacing:2px;color:var(--line)}
+.stars .on{color:var(--sun)}
+.tipbar{border-left:6px solid var(--sun);background:var(--paper);border-radius:12px;padding:12px 14px;font-weight:700}
+.sim{background:var(--ink);color:var(--bg);border:none;border-radius:18px;padding:18px;text-align:left;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.sim h2{color:var(--bg)}
+.sim .go{background:var(--sun);color:#1B2350;border-radius:12px;padding:8px 16px;font-family:var(--display);font-weight:800;font-size:1.15rem}
+.linkbtn{background:none;border:none;color:var(--blue);font-weight:800;text-decoration:underline;padding:4px 0;align-self:flex-start}
+.btn{background:var(--blue);color:var(--onaccent);border:none;border-bottom:4px solid rgba(0,0,0,.25);border-radius:14px;padding:12px 20px;font-family:var(--display);font-weight:800;font-size:1.2rem}
+.btn:active{transform:translateY(2px);border-bottom-width:2px}
+.btn.ghost{background:var(--paper);color:var(--ink);border:2px solid var(--line);border-bottom-width:4px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.back{align-self:flex-start}
+.lesson{display:flex;flex-direction:column;gap:12px}
+.lesson ul{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px}
+.big{font-family:var(--display);font-weight:800;font-size:1.15rem}
+.t{font-weight:800;color:var(--wc,var(--blue))}
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:420px}
+th,td{border:2px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{font-family:var(--display);font-size:1.05rem}
+.alert{background:var(--badbg);border:2px solid var(--bad);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.alert b.h{color:var(--bad);font-family:var(--display);font-size:1.15rem}
+.good{background:var(--okbg);border:2px solid var(--ok);border-radius:14px;padding:12px 14px}
+.text{background:var(--bg);border:2px dashed var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.text .right{text-align:right}
+.text .title{font-family:var(--display);font-weight:800;font-size:1.2rem}
+.text .speaker{font-weight:800}
+.text i{color:var(--muted)}
+.part{display:grid;grid-template-columns:120px minmax(0,1fr);gap:10px;align-items:start}
+.part .tag{background:var(--w4);color:var(--onaccent);font-size:.78rem;font-weight:800;border-radius:8px;padding:2px 8px;text-align:center}
+@media (max-width:480px){.part{grid-template-columns:1fr;gap:4px}.part .tag{justify-self:start}}
+details{border:2px solid var(--line);border-radius:14px;padding:8px 12px;background:var(--paper)}
+summary{font-weight:800;cursor:pointer;color:var(--blue)}
+details[open] summary{margin-bottom:8px}
+.say{display:inline-flex;align-items:center;gap:6px;background:var(--paper);border:2px solid var(--line);border-radius:999px;padding:4px 12px;font-weight:800;font-size:.9rem;color:var(--blue)}
+.say svg{width:18px;height:18px}
+.prog{height:12px;background:var(--line);border-radius:99px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--wc,var(--blue));border-radius:99px;transition:width .3s}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-weight:800;color:var(--muted)}
+.combo{color:var(--w2)}
+.q{font-family:var(--display);font-weight:700;font-size:1.4rem;line-height:1.25}
+.opts{display:grid;gap:10px}
+.opt{background:var(--paper);border:2px solid var(--line);border-bottom-width:4px;border-radius:14px;padding:12px 14px;text-align:left;font-weight:700;font-size:1.05rem}
+.opt:hover:not(:disabled){border-color:var(--wc,var(--blue))}
+.opt.right{background:var(--okbg);border-color:var(--ok)}
+.opt.wrong{background:var(--badbg);border-color:var(--bad)}
+.opt:disabled{cursor:default}
+.syls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding-block:8px}
+.sylcol{display:flex;flex-direction:column;align-items:center;gap:4px}
+.syl{min-width:72px;background:var(--paper);border:3px solid var(--line);border-bottom-width:6px;border-radius:16px;padding:10px 14px;font-family:var(--display);font-weight:800;font-size:2rem;line-height:1}
+.syl:hover:not(:disabled){border-color:var(--w1)}
+.syl.hit{background:var(--okbg);border-color:var(--ok);color:var(--ok)}
+.syl.miss{background:var(--badbg);border-color:var(--bad)}
+.syl:disabled{cursor:default}
+.pos{font-size:.78rem;font-weight:800;color:var(--muted);min-height:1.2em;text-transform:uppercase;letter-spacing:.04em}
+.cls3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media (max-width:480px){.cls3{grid-template-columns:1fr}}
+.fb{border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.fb.ok{background:var(--okbg);border:2px solid var(--ok)}
+.fb.no{background:var(--badbg);border:2px solid var(--bad)}
+.fb b.h{font-family:var(--display);font-size:1.25rem}
+.fb.ok b.h{color:var(--ok)} .fb.no b.h{color:var(--bad)}
+.ordrow{min-height:56px;border:2px dashed var(--line);border-radius:14px;padding:8px;display:flex;flex-direction:column;gap:6px}
+.ordrow .ph{color:var(--muted);font-weight:700;padding:6px}
+.pool{display:flex;flex-wrap:wrap;gap:8px}
+.piece{background:var(--paper);border:2px solid var(--line);border-bottom-width:4px;border-radius:12px;padding:8px 12px;font-weight:800;text-align:left}
+.ordrow .piece{display:flex;gap:10px;align-items:center;width:100%}
+.ordrow .piece .n{background:var(--wc,var(--blue));color:var(--onaccent);border-radius:99px;min-width:26px;height:26px;display:inline-grid;place-items:center;font-size:.85rem}
+.ordrow .piece.right{border-color:var(--ok);background:var(--okbg)}
+.ordrow .piece.wrong{border-color:var(--bad);background:var(--badbg)}
+.result{align-items:center;text-align:center}
+.result .stars{font-size:3rem}
+.grade{font-family:var(--display);font-weight:800;font-size:4rem;line-height:1;color:var(--wc,var(--blue));font-variant-numeric:tabular-nums}
+.miss-list{display:flex;flex-direction:column;gap:10px;text-align:left;width:100%}
+.miss-item{border:2px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.miss-item .c{color:var(--ok);font-weight:800}
+.bars{display:flex;flex-direction:column;gap:10px}
+.bar{display:grid;grid-template-columns:150px minmax(0,1fr) 54px;gap:10px;align-items:center;font-weight:700}
+.bar .track{height:14px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar .track i{display:block;height:100%;border-radius:99px}
+.bar .v{text-align:right;font-variant-numeric:tabular-nums}
+@media (max-width:480px){.bar{grid-template-columns:1fr 54px}.bar .track{grid-column:1/-1;grid-row:2}}
+.confetti{position:fixed;top:-12px;width:10px;height:14px;border-radius:2px;z-index:50;pointer-events:none;animation:fall 1.8s ease-in forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(540deg)}}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.shake{animation:shake .3s}
+@media (prefers-reduced-motion: reduce){.confetti{display:none}.shake{animation:none}.world{transition:none}}
+.foot{color:var(--muted);font-size:.85rem;text-align:center}
+</style>
+
+<div class="wrap" id="app"></div>
+
+<script>
+/* ===================== TEXTOS ===================== */
+const TEXTS = {
+  carta: { titulo: 'Carta para a vovó', html: `
+    <p class="right">Rio de Janeiro, 9 de novembro de 2026.</p>
+    <p>Querida vovó Lia,</p>
+    <p>Estou com muita saudade de você e do seu bolo de cenoura! Aqui em casa está tudo bem. Na semana passada, a minha turma fez uma experiência de ciências: plantamos feijões no algodão e vimos as raízes nascerem. Eu fui o responsável por regar todos os dias!</p>
+    <p>No sábado, fui à praia com o papai e construímos um castelo de areia enorme. Uma onda derrubou tudo, mas a gente riu muito.</p>
+    <p>Quando você vier nas férias, quero te mostrar o meu feijãozinho, que já está bem alto.</p>
+    <p>Um abraço bem apertado do seu neto,<br>Theo</p>
+    <p>P.S.: Não esqueça de trazer a receita do bolo!</p>` },
+  relato: { titulo: 'O feijão que cresceu no algodão', html: `
+    <p class="title">O feijão que cresceu no algodão</p>
+    <p><i>Relato de observação da turma do 3º ano</i></p>
+    <p><b>Objetivo:</b> descobrir o que uma semente de feijão precisa para germinar (começar a crescer).</p>
+    <p><b>Materiais:</b> dois copos de plástico, algodão, água, seis grãos de feijão e etiquetas.</p>
+    <p><b>Como fizemos:</b> Primeiro, colocamos algodão nos dois copos e três feijões em cada um. Depois, molhamos apenas o algodão do copo A. O copo B ficou seco. Deixamos os dois copos perto da janela, onde batia sol.</p>
+    <p><b>O que observamos:</b><br>
+    2º dia: os feijões do copo A incharam e a casca começou a rachar.<br>
+    4º dia: apareceram pequenas raízes brancas no copo A.<br>
+    7º dia: nasceu um caule verde com duas folhinhas no copo A.<br>
+    No copo B, os feijões continuaram iguais durante toda a semana.</p>
+    <p><b>Conclusão:</b> a semente de feijão precisa de água para germinar. Sem água, ela não cresce.</p>` },
+  historia: { titulo: 'O mistério da bola sumida', html: `
+    <p class="title">O mistério da bola sumida</p>
+    <p>Era uma tarde de sábado no parque do bairro. Pedro e sua irmã Bia jogavam futebol perto do lago.</p>
+    <p>De repente, Pedro chutou a bola com tanta força que ela voou por cima dos arbustos e desapareceu. Os dois procuraram por todo lado, mas não encontraram nada. Bia já estava quase chorando, porque a bola era um presente do avô.</p>
+    <p>Foi então que ouviram um latido. Um cachorrinho marrom saiu do meio das plantas, com a bola presa entre os dentes, abanando o rabo!</p>
+    <p>Pedro riu e jogou um graveto para o cachorro, que largou a bola na hora. A partir daquele dia, o cachorrinho, que ganhou o nome de Caramelo, virou o melhor goleiro do parque.</p>` },
+  teatro: { titulo: 'A bola sumida (texto teatral)', html: `
+    <p class="title">A bola sumida: Cena 1</p>
+    <p><i>(Um parque. No fundo do palco, arbustos de papelão. Pedro e Bia chutam uma bola.)</i></p>
+    <p><span class="speaker">PEDRO:</span> <i>(animado)</i> Olha só este chute, Bia!</p>
+    <p><i>(Pedro chuta. A bola some atrás dos arbustos.)</i></p>
+    <p><span class="speaker">BIA:</span> <i>(assustada)</i> Pedro! Cadê a bola do vovô?</p>
+    <p><span class="speaker">PEDRO:</span> <i>(procurando)</i> Calma, ela não pode ter ido longe...</p>
+    <p><i>(Ouve-se um latido. Um cachorrinho entra pulando com a bola na boca.)</i></p>
+    <p><span class="speaker">BIA:</span> <i>(rindo)</i> Olha quem achou a nossa bola!</p>` },
+  corvo: { titulo: 'A raposa e o corvo', html: `
+    <p class="title">A raposa e o corvo</p>
+    <p><i>Fábula de Esopo, recontada</i></p>
+    <p>Certo dia, um corvo encontrou um pedaço de queijo e voou com ele no bico até o galho de uma árvore.</p>
+    <p>Uma raposa que passava viu o queijo e ficou com água na boca. Chegou perto da árvore e disse:</p>
+    <p>— Bom dia, senhor corvo! Que penas brilhantes o senhor tem! Se a sua voz for tão bonita quanto a sua plumagem, o senhor é a ave mais linda da floresta.</p>
+    <p>O corvo, todo vaidoso, abriu o bico para cantar. O queijo caiu, e a raposa o abocanhou e foi embora correndo.</p>
+    <p><b>Moral:</b> desconfie de quem elogia demais só para conseguir alguma coisa.</p>` },
+  cegonha: { titulo: 'A cegonha e a raposa', html: `
+    <p class="title">A cegonha e a raposa</p>
+    <p><i>Fábula de Esopo, recontada</i></p>
+    <p>Um dia, a raposa convidou sua amiga cegonha para jantar. Ela serviu uma sopa rala sobre uma pedra lisa.</p>
+    <p>A cegonha, com seu bico longo e fino, tentou de todo jeito, mas só conseguia bater o bico na pedra. Voltou para casa com fome, enquanto a raposa lambia a sopa toda.</p>
+    <p>Em outra ocasião, a cegonha convidou a raposa para jantar. Preparou uma comida cheirosa e serviu em vasos altos e de boca estreita. O bico da cegonha entrava com facilidade, mas o focinho da raposa não alcançava a comida.</p>
+    <p>Desta vez, foi a raposa que voltou para casa desapontada e com fome.</p>` },
+  galo: { titulo: 'O galo e a pérola', html: `
+    <p class="title">O galo e a pérola</p>
+    <p><i>Fábula de Esopo, recontada</i></p>
+    <p>Um galo ciscava no terreiro procurando comida quando encontrou uma pérola brilhante. Ele olhou para ela e pensou:</p>
+    <p>— Para um joalheiro, você seria um tesouro. Mas para mim, um grãozinho de milho valeria muito mais!</p>
+    <p>E o galo deixou a pérola onde estava e foi procurar algo para comer.</p>` }
+};
+
+/* ===================== PALAVRAS (sílaba forte marcada com *) ===================== */
+const WORDS = [
+  'ca-*fé','so-*fá','ja-ca-*ré','a-*vó','co-ra-*ção','a-ba-ca-*xi','a-*mor','pa-*pel','ta-*tu','ma-ra-cu-*já',
+  'pi-co-*lé','ca-*ju','ji-*ló','pa-ra-*béns','tam-*bém','ba-*lão','fu-te-*bol','bo-*né','u-ru-*bu','jar-*dim','ci-*pó','a-ni-*mal',
+  '*ca-sa','bo-*ne-ca','es-*co-la','ja-*ne-la','ca-*der-no','me-*ni-no','*fá-cil','*lá-pis','ca-*dei-ra','a-*mi-go',
+  'tar-ta-*ru-ga','*bo-la','pro-fes-*so-ra','a-*çú-car','*ál-bum','ca-*va-lo','*li-vro','*tê-nis','sa-*pa-to','pi-*po-ca',
+  '*mé-di-co','*pás-sa-ro','*lâm-pa-da','*má-gi-co','*mú-si-ca','ma-te-*má-ti-ca','*ár-vo-re','*ô-ni-bus','*sá-ba-do',
+  '*pês-se-go','*xí-ca-ra','*bús-so-la','*lá-gri-ma','pi-*râ-mi-de','*fós-fo-ro','*rá-pi-do','*pá-gi-na',
+  /* palavras do livro (cap. 10) */
+  'a-*zul','pe-*ru','a-*nel','es-pe-ci-*al','sa-bi-*á','ta-man-du-*á','a-*trás','chu-*lé','be-*bê','vo-*vô','ba-ju-la-*dor',
+  'ra-*po-sa','*fá-bu-la','ce-*go-nha','*pé-ro-la'
+];
+/* palavras que o Samuel errou nas fichas: aparecem com mais frequência */
+const FOCO = ['so-*fá','ca-*fé','ma-te-*má-ti-ca','pa-*pel','*ár-vo-re','*lâm-pa-da','ja-ca-*ré','*pás-sa-ro'];
+function parseWord(s){
+  const parts = s.split('-'); const t = parts.findIndex(p => p.startsWith('*'));
+  const syl = parts.map(p => p.replace('*',''));
+  const fe = syl.length - t;
+  return { syl, t, word: syl.join(''), cls: fe===1?'oxítona':fe===2?'paroxítona':'proparoxítona' };
+}
+const POSNAME = fe => fe===1?'última':fe===2?'penúltima':fe===3?'antepenúltima':'';
+
+/* ===================== PERGUNTAS (a 1ª opção é a correta; embaralhadas na tela) ===================== */
+const MC = {
+tonica: [
+ {q:'O que é a sílaba tônica?', o:['A sílaba falada com mais força','A primeira sílaba da palavra','A sílaba que sempre tem acento','A última letra da palavra'], e:'Sílaba tônica é a mais forte. Ela pode estar em qualquer lugar e nem sempre tem acento: em "boneca", a tônica é NE.'},
+ {q:'Nas palavras OXÍTONAS, a sílaba mais forte é a...', o:['Última sílaba','Primeira sílaba','Penúltima sílaba','Antepenúltima sílaba'], e:'Oxítona = a ÚLTIMA sílaba é a forte: ca-FÉ, so-FÁ, a-ba-ca-XI. Não é a primeira!'},
+ {q:'Nas palavras PAROXÍTONAS, a sílaba mais forte é a...', o:['Penúltima sílaba','Última sílaba','Primeira sílaba sempre','Antepenúltima sílaba'], e:'Paroxítona = PENÚLTIMA (2ª contando do fim): bo-NE-ca, es-CO-la, ja-NE-la.'},
+ {q:'Nas palavras PROPAROXÍTONAS, a sílaba mais forte é a...', o:['Antepenúltima sílaba','Última sílaba','Penúltima sílaba','Sílaba do meio sempre'], e:'Proparoxítona = ANTEPENÚLTIMA (3ª contando do fim): MÉ-di-co, PÁS-sa-ro.'},
+ {q:'Complete: todas as palavras proparoxítonas são...', o:['acentuadas','oxítonas','monossílabas','sem acento'], e:'Regra de ouro: TODA proparoxítona tem acento. Médico, pássaro, lâmpada, matemática.'},
+ {q:'Qual palavra é proparoxítona?', o:['lâmpada','janela','café','papel'], e:'LÂM-pa-da: a sílaba forte é a 3ª contando do fim.'},
+ {q:'Qual destes grupos tem SÓ palavras oxítonas?', o:['café, sofá, jacaré','casa, bola, menino','médico, música, pássaro','escola, caderno, janela'], e:'ca-FÉ, so-FÁ, ja-ca-RÉ: todas com a última sílaba forte.'},
+ {q:'Como se separa "abacaxi" em sílabas?', o:['a-ba-ca-xi','ab-a-ca-xi','a-bac-a-xi','aba-ca-xi'], e:'a-ba-ca-xi tem 4 sílabas. A forte é XI, a última. Então é oxítona.'},
+ {q:'A palavra "matemática" é...', o:['proparoxítona','paroxítona','oxítona','monossílaba'], e:'ma-te-MÁ-ti-ca. Contando do fim: ca (1), ti (2), MÁ (3). 3ª do fim = proparoxítona.'},
+ {q:'A palavra "papel" é...', o:['oxítona','paroxítona','proparoxítona','monossílaba'], e:'pa-PEL: a última sílaba é a forte. É oxítona, mesmo sem acento.'},
+ {q:'A palavra "sofá" é...', o:['oxítona','paroxítona','proparoxítona','monossílaba'], e:'so-FÁ: a forte é a última. O acento já mostra onde está a força.'},
+ {q:'Quantas sílabas tem a palavra "caderno"?', o:['3','2','4','5'], e:'ca-der-no: 3 sílabas. A forte é DER, a penúltima: paroxítona.'},
+ {q:'Qual destas palavras é paroxítona com acento?', o:['lápis','café','pássaro','sofá'], e:'LÁ-pis é paroxítona e tem acento porque termina em "is". A maioria das paroxítonas não tem acento.'},
+ {q:'Qual palavra é paroxítona?', o:['escola','jacaré','médico','abacaxi'], e:'es-CO-la: a forte é a penúltima.'}
+],
+oxitona: [
+ {q:'Qual oxítona está escrita SEM o acento que precisa?', o:['sofa','caju','amor','papel'], e:'"sofá" termina em A, então leva acento. Caju (u), amor (r) e papel (l) não levam.'},
+ {q:'Qual é a escrita correta?', o:['jacaré','jacare','jácare','jacarê'], e:'ja-ca-RÉ: oxítona terminada em E leva acento. O som é aberto, então o acento é agudo (´).'},
+ {q:'Por que "café" tem acento?', o:['Porque é oxítona terminada em E','Porque é proparoxítona','Porque tem duas sílabas','Porque começa com C'], e:'Oxítonas terminadas em A, E, O, EM e ENS (com ou sem S) levam acento.'},
+ {q:'Qual destas oxítonas NÃO leva acento?', o:['abacaxi','cipó','também','parabéns'], e:'"abacaxi" termina em I. Oxítona terminada em I, U, R, L ou Z não leva acento.'},
+ {q:'"Parabéns" leva acento porque é oxítona terminada em...', o:['ENS','A','I','R'], e:'para-BÉNS: oxítona terminada em ENS leva acento.'},
+ {q:'Qual é a escrita correta?', o:['vovô','vovo','vóvo','vôvo'], e:'vo-VÔ: oxítona terminada em O. Som fechado, acento circunflexo (^).'},
+ {q:'Quais terminações fazem as oxítonas levarem acento?', o:['A, E, O, EM, ENS (com ou sem S)','I, U, R, L','Todas as terminações','Nenhuma, oxítona nunca tem acento'], e:'A regra: A(s), E(s), O(s), EM e ENS. Exemplos: sofá, café, cipó, também, parabéns.'},
+ {q:'"Picolé", "maracujá" e "jiló" têm em comum que são...', o:['oxítonas com acento','proparoxítonas','monossílabos','paroxítonas'], e:'pi-co-LÉ, ma-ra-cu-JÁ, ji-LÓ: a última sílaba é a forte, e terminam em E, A, O.'},
+ {q:'Qual palavra é oxítona?', o:['Café','Cadeira','Médico','Escola'], e:'ca-FÉ: última sílaba forte. Cadeira e escola são paroxítonas; médico é proparoxítona.'},
+ {q:'Em qual palavra a ÚLTIMA sílaba é a mais forte?', o:['Abacaxi','Árvore','Lápis','Boneca'], e:'a-ba-ca-XI. Árvore é proparoxítona, lápis e boneca são paroxítonas.'},
+ {q:'Qual frase está escrita corretamente?', o:['O bebê dormiu no sofá.','O bebe dormiu no sofa.','O bébe dormiu no sófa.','O bêbe dormiu no sofá.'], e:'be-BÊ e so-FÁ são oxítonas terminadas em E e A: as duas levam acento na última sílaba.'},
+ {q:'Toda palavra oxítona tem acento?', o:['Não. Amor, papel e caju são oxítonas sem acento.','Sim, todas têm.','Só as que têm 3 sílabas.','Só as que começam com vogal.'], e:'Só levam acento as terminadas em A, E, O, EM, ENS. A-MOR, pa-PEL, ca-JU são oxítonas sem acento.'},
+ {q:'"Ninguém" leva acento porque é oxítona terminada em...', o:['EM','ENS','I','U'], e:'nin-GUÉM termina em EM, então leva acento. O mesmo vale para "também" e "alguém".'},
+ {q:'Todas estas palavras estão sem acento. Qual delas PRECISA de acento?', o:['cipo','tatu','jardim','rapaz'], e:'O certo é ci-PÓ: oxítona terminada em O leva acento. Tatu (u), jardim (im) e rapaz (z) não levam.'},
+ {q:'No poema do livro, por que "tamanduá" tem acento?', o:['É oxítona terminada em A','É proparoxítona','É monossílabo','Termina em U'], e:'ta-man-du-Á: a última sílaba é a forte e termina em A.'},
+ {q:'Qual destas oxítonas do livro NÃO tem acento?', o:['azul','sabiá','jiló','bebê'], e:'a-ZUL termina em L. Sabiá (a), jiló (o) e bebê (e) levam acento.'},
+ {q:'"Peru", "anel" e "especial" são oxítonas. Por que não têm acento?', o:['Porque terminam em U e L','Porque são paroxítonas','Porque são palavras pequenas','Porque têm a letra E'], e:'Só levam acento as oxítonas terminadas em A, E, O (com ou sem S), EM e ENS.'},
+ {q:'No livro, "bajulador" é o exemplo de palavra...', o:['oxítona','paroxítona','proparoxítona','monossílaba'], e:'ba-ju-la-DOR: a última sílaba é a tônica. Ela não tem acento porque termina em R.'},
+ {q:'No livro, "raposa" é o exemplo de palavra...', o:['paroxítona','oxítona','proparoxítona','monossílaba'], e:'ra-PO-sa: a penúltima sílaba é a tônica.'},
+ {q:'No livro, "fábula" é o exemplo de palavra...', o:['proparoxítona','paroxítona','oxítona','monossílaba'], e:'FÁ-bu-la: a antepenúltima sílaba é a tônica. E toda proparoxítona tem acento.'},
+ {q:'Qual verso do poema do livro tem uma oxítona acentuada terminada em E?', o:['O bicho-preguiça toma café','O caracol anda devagar','Porque sua casa precisa carregar','Pra encher sua barriga'], e:'ca-FÉ: oxítona terminada em E. No poema também aparecem chulé e tamanduá.'}
+],
+mono: [
+ {q:'O que é uma palavra monossílaba?', o:['Palavra que tem só uma sílaba','Palavra com duas sílabas','Palavra que sempre tem acento','Palavra muito comprida'], e:'Mono = um. Pé, sol, céu, nó e flor têm uma sílaba só.'},
+ {q:'Qual destas palavras é monossílaba?', o:['pé','café','bola','sapato'], e:'"pé" tem uma sílaba só. Café (ca-fé) tem duas.'},
+ {q:'Qual monossílabo precisa de acento?', o:['pe (pé)','sol','flor','mar'], e:'Monossílabos fortes terminados em A, E, O levam acento: pé. Sol, flor e mar terminam em L e R.'},
+ {q:'Qual é a escrita correta?', o:['três','tres','trés','trêz'], e:'"três" é monossílabo forte terminado em E + S. Som fechado: acento circunflexo (^).'},
+ {q:'Qual é a escrita correta para "o mês de dezembro"?', o:['mês','mes','més','mêz'], e:'"mês" termina em E + S e é falado com força. Leva acento circunflexo.'},
+ {q:'"Dei um ___ no cadarço." Qual palavra completa?', o:['nó','no','nô','nõ'], e:'"nó" (o laço) é monossílabo forte terminado em O: leva acento agudo.'},
+ {q:'Por que "sol" NÃO tem acento?', o:['Porque termina em L, e não em A, E ou O','Porque é uma palavra grande','Porque é oxítona','Porque o sol é quente'], e:'A regra só acentua monossílabos fortes terminados em A, E, O (com ou sem S).'},
+ {q:'Qual grupo está todo acentuado corretamente?', o:['pá, pé, pó','pa, pé, pó','pá, pe, po','pà, pè, pò'], e:'pá, pé, pó: monossílabos fortes terminados em A, E, O.'},
+ {q:'"Ele ___ um presente para a mãe." Qual palavra completa?', o:['dá','da','dã','dâ'], e:'Aqui "dá" é o verbo dar, falado com força: leva acento. "da" sem acento é fraco, como em "casa da vovó".'},
+ {q:'"O céu ___ azul." Qual palavra completa?', o:['é','e','ê','è'], e:'"é" (verbo ser) é forte e tem acento. "e" sem acento junta palavras: "pão e leite".'},
+ {q:'Qual destas palavras NÃO precisa de acento?', o:['luz','já','nós','só'], e:'"luz" termina em Z. Já, nós e só terminam em A e O e levam acento.'},
+ {q:'"Vovó tomou ___ de camomila." Qual palavra completa?', o:['chá','cha','chã','châ'], e:'"chá" é monossílabo forte terminado em A: leva acento.'},
+ {q:'"Céu" leva acento porque...', o:['tem o som aberto "éu"','tem duas sílabas','é proparoxítona','termina em L'], e:'Monossílabos com som aberto éu, éi, ói também levam acento: céu, véu, dói.'},
+ {q:'Quantas sílabas tem a palavra "flor"?', o:['1','2','3','4'], e:'"flor" é monossílaba: uma sílaba só, e sem acento porque termina em R.'},
+ {q:'Segundo o livro, quais monossílabos levam acento?', o:['Os tônicos terminados em A, AS, E, ES, O, OS','Todos os monossílabos','Só os que têm a letra R','Os terminados em L'], e:'Exemplos do livro: pá, lá, cá, gás, pé, fé, três, pó, só, xô, nós.'},
+ {q:'O carteiro precisa seguir o caminho em que TODOS os monossílabos levam acento. Qual é?', o:['pé, gás, três, ré, chá','pó, só, flor, mar, fé','má, lá, dor, mês, bom','sol, mar, flor, luz, mel'], e:'pé, gás, três, ré e chá terminam em E, AS, ES, E, A. Flor, mar, dor e bom não levam acento.'},
+ {q:'"___! Sai daqui, gato!" Qual palavra completa?', o:['Xô','Xo','Xõ','Xó'], e:'"xô" é monossílabo tônico terminado em O: leva acento circunflexo.'},
+ {q:'"O fogão funciona a ___." Qual palavra completa?', o:['gás','gas','gãs','gaz'], e:'"gás" termina em AS e é tônico: leva acento.'},
+ {q:'Mel, chá, pé e pó: o que essas palavras têm em comum?', o:['Todas têm uma só sílaba','Todas têm acento','Todas são proparoxítonas','Todas têm duas sílabas'], e:'São monossílabos. Mas atenção: mel não tem acento, porque termina em L.'}
+],
+carta: [
+ {t:'carta', q:'Quem escreveu a carta (o remetente)?', o:['Theo','Vovó Lia','O papai','A professora'], e:'Remetente é quem ENVIA. Theo assinou no final.'},
+ {t:'carta', q:'Para quem a carta foi escrita (o destinatário)?', o:['Para a vovó Lia','Para o papai','Para a turma','Para o Theo'], e:'Destinatário é quem RECEBE. A saudação "Querida vovó Lia" mostra para quem é.'},
+ {t:'carta', q:'"Querida vovó Lia," é qual parte da carta?', o:['Saudação','Despedida','Assinatura','Local e data'], e:'A saudação (ou vocativo) é o cumprimento, chamando quem vai ler.'},
+ {t:'carta', q:'Qual é o principal motivo da carta?', o:['Contar novidades e dizer que sente saudade','Pedir dinheiro emprestado','Explicar uma receita de bolo','Vender um feijão'], e:'Theo conta o que fez na escola e na praia e diz que está com saudade.'},
+ {t:'carta', q:'O que significa "P.S." no final da carta?', o:['Um recado lembrado depois da assinatura','O nome da cidade','A data em que a carta chegou','O endereço da vovó'], e:'P.S. quer dizer pós-escrito: algo escrito depois da assinatura.'},
+ {t:'carta', q:'Por que Theo e o pai riram na praia?', o:['Uma onda derrubou o castelo de areia','O pai caiu na água','Viram um cachorro','Começou a chover'], e:'O texto diz: "Uma onda derrubou tudo, mas a gente riu muito."'},
+ {t:'carta', q:'A linguagem desta carta é...', o:['Informal e carinhosa','Difícil e cheia de termos técnicos','Igual à de uma bula de remédio','Só com números'], e:'Carta pessoal é para pessoas próximas: usa palavras do dia a dia e carinho, como "abraço bem apertado".'},
+ {q:'Para quem costumamos escrever uma carta pessoal?', o:['Pessoas próximas, como família e amigos','Uma empresa, para reclamar','Um jornal, para dar notícia','Ninguém, é só um diário'], e:'A carta pessoal é trocada entre pessoas que se conhecem e têm intimidade.'},
+ {q:'No envelope, o CEP serve para...', o:['Ajudar o correio a encontrar o endereço','Dizer o nome de quem escreveu','Colar o selo','Mostrar a data'], e:'CEP é o Código de Endereçamento Postal: números que indicam a rua e a cidade.'},
+ {t:'carta', q:'Onde e quando a carta foi escrita?', o:['No Rio de Janeiro, em 9 de novembro de 2026','Na casa da vovó, nas férias','Na praia, no sábado','Na escola, ontem'], e:'Essa informação fica no começo da carta: local e data.'},
+ {t:'carta', q:'"Um abraço bem apertado do seu neto" é qual parte da carta?', o:['Despedida','Saudação','Corpo','P.S.'], e:'A despedida vem antes da assinatura e encerra a mensagem com carinho.'},
+ {t:'carta', q:'O que Theo quer mostrar para a vovó nas férias?', o:['O feijãozinho que plantou','O castelo de areia','Um bolo de cenoura','A escola nova'], e:'"Quero te mostrar o meu feijãozinho, que já está bem alto."'},
+ {q:'No livro, quem escreveu a carta para o primo Lucas contando sobre os Três Reis Magos?', o:['Carolina','Frederico','Pepe','Lili'], e:'Carolina é a remetente; o primo Lucas é o destinatário.'},
+ {q:'Por que Carolina escreveu para o primo Lucas?', o:['Para contar a tradição dos Três Reis Magos, porque ele gosta de histórias de reis','Para pedir um presente de Natal','Para convidar Lucas para uma festa','Para reclamar do correio'], e:'Ela sabia que Lucas gosta de histórias sobre reis e cavaleiros.'},
+ {q:'Em "De carta em carta", para quem Pepe escreveu para ajudar o avô?', o:['Para o governo','Para a professora','Para o seu Miguel','Para o carteiro'], e:'Pepe escreveu ao "Seu Governo" pedindo que o avô pudesse descansar, ou seja, se aposentar.'},
+ {q:'Em "De carta em carta", por que o avô José estava tão cansado?', o:['Trabalhou a vida inteira como jardineiro','Ficou acordado jogando','Estava com gripe','Correu uma maratona'], e:'Ele cuidou de jardins e canteiros a vida toda e merecia se aposentar.'},
+ {q:'No fim de "De carta em carta", Pepe se tornou...', o:['atendente do governo','escrevedor','professor','jardineiro'], e:'Pepe não virou escrevedor: foi trabalhar no posto de atendimento do governo, ajudando pessoas com a aposentadoria.'},
+ {q:'Na cidade de Pepe, o que faziam os "escrevedores"?', o:['Escreviam cartas para quem não sabia escrever','Entregavam as cartas','Vendiam papel','Ensinavam futebol'], e:'Muita gente não sabia ler nem escrever e pedia ajuda aos escrevedores, como o seu Miguel.'},
+ {q:'Por que o e-mail substituiu muitas cartas?', o:['Chega muito mais rápido e não precisa ir ao correio','Porque é escrito à mão','Porque precisa de selo','Porque demora meses'], e:'Mas o e-mail precisa de aparelho eletrônico, internet e endereço eletrônico.'},
+ {q:'Num e-mail, o campo "Para:" mostra...', o:['o destinatário','o remetente','a data','o CEP'], e:'"Para:" é quem recebe (destinatário). "De:" é quem envia (remetente).'},
+ {q:'Antigamente, como as cartas viajavam até o destinatário?', o:['De navio, trem, a cavalo e até com pombos-correio','Só pela internet','Por telefone','Por mensagem de celular'], e:'Por isso as cartas demoravam dias e até meses para chegar.'},
+ {q:'Quantos algarismos tem o CEP?', o:['8','5','3','10'], e:'O CEP tem oito números, que indicam a região do país e as subdivisões do endereço.'},
+ {q:'A palavra "caligrafia" quer dizer...', o:['escrita bela','escrita rápida','escrita no computador','escrita secreta'], e:'Vem do grego: kalos (beleza) + graphia (escrita).'},
+ {q:'Como as pessoas da Pré-História registravam o dia a dia?', o:['Com desenhos nas paredes das cavernas (arte rupestre)','Com e-mails','Com cartas no correio','Com máquinas de escrever'], e:'No Brasil, o Parque Nacional da Serra da Capivara, no Piauí, tem muitas pinturas rupestres.'},
+ {q:'O papiro, que os egípcios usavam para fazer folhas, é...', o:['uma planta aquática','um tipo de pedra','uma pena de pássaro','um animal'], e:'Com o papiro, os egípcios faziam folhas para seus registros.'},
+ {q:'Johannes Gutenberg ficou famoso por criar...', o:['a primeira máquina de impressão de letras','o primeiro e-mail','o selo do correio','o CEP'], e:'A máquina de Gutenberg imprimia letras, números e outros símbolos.'},
+ {q:'Qual a diferença entre diário e carta?', o:['O diário é escrito para o próprio autor ler','O diário sempre vai pelo correio','O diário não tem data','A carta é secreta e ninguém lê'], e:'O diário é como uma carta endereçada a nós mesmos: é pessoal e não é para ser compartilhado.'},
+ {q:'No diário da Lili, que parte do corpo ficou doendo depois da festa?', o:['Os pés, porque ela dançou','As mãos, porque escreveu muito','A barriga, porque comeu bolo','A cabeça, por causa da música'], e:'Ela jogou dama, cantou e até dançou, e depois os PÉS doeram. Releia com calma o que o texto diz!'},
+ {q:'Quais partes da carta também aparecem no diário da Lili?', o:['Data, saudação, corpo do texto e despedida','Selo e CEP','Remetente e destinatário no envelope','Título e moral'], e:'Ela começa com a data, escreve "Querido amigo!" e termina com uma despedida.'},
+ {q:'Para que serve um diário?', o:['Registrar o que acontece na nossa vida para não esquecer','Mandar recados para a escola','Vender coisas','Contar fábulas com moral'], e:'No diário organizamos pensamentos e lembranças. Cada diário é único.'},
+ {q:'Para que servem o local e a data no início da carta?', o:['Para saber onde e quando a carta foi escrita','Para o carteiro achar a casa','Para pagar o selo','Para mostrar quem vai receber'], e:'Assim o destinatário sabe de onde e de quando são as notícias.'},
+ {type:'order', q:'Coloque as partes da carta pessoal na ordem certa (como no livro).', items:['Local e data','Saudação','Corpo da carta','Despedida','Assinatura'], e:'Local e data, saudação, corpo da carta, despedida e assinatura. O P.S. é opcional e vem depois da assinatura.'}
+],
+relato: [
+ {t:'relato', q:'Qual era o objetivo da experiência?', o:['Descobrir o que a semente de feijão precisa para germinar','Saber quantos feijões cabem no copo','Fazer uma sopa de feijão','Pintar os copos'], e:'O objetivo aparece logo no começo: o que a turma queria descobrir.'},
+ {t:'relato', q:'Qual material NÃO foi usado?', o:['Terra','Algodão','Copos de plástico','Água'], e:'A lista tem copos, algodão, água, feijões e etiquetas. Não tem terra.'},
+ {t:'relato', q:'O que aconteceu no 4º dia no copo A?', o:['Apareceram pequenas raízes brancas','Nasceu uma flor','Os feijões incharam','Nada mudou'], e:'O registro do 4º dia diz: "apareceram pequenas raízes brancas no copo A".'},
+ {t:'relato', q:'Por que os feijões do copo B não cresceram?', o:['Porque ficaram sem água','Porque ficaram longe do sol','Porque eram feijões diferentes','Porque o copo era pequeno'], e:'Os dois copos ficaram na janela. A única diferença era a água: o copo B ficou seco.'},
+ {t:'relato', q:'"Colocamos", "molhamos" e "deixamos" mostram que o relato...', o:['Conta o que já aconteceu (passado), escrito por "nós"','Conta o que vai acontecer no futuro','É uma história inventada','É uma carta'], e:'No relato usamos verbos no passado, porque contamos o que fizemos e observamos.'},
+ {t:'relato', q:'Para que serve a conclusão do relato?', o:['Dizer o que a turma aprendeu com a experiência','Listar os materiais','Contar uma piada','Dizer o nome da professora'], e:'A conclusão responde ao objetivo: o feijão precisa de água para germinar.'},
+ {q:'Um relato de observação e pesquisa serve para...', o:['Registrar o que foi observado em uma experiência ou pesquisa','Contar um conto de fadas','Convidar para uma festa','Fazer uma propaganda'], e:'É o texto do cientista: registra com cuidado o que foi feito e observado.'},
+ {q:'Qual frase NÃO combina com um relato de observação?', o:['"Era uma vez um feijão mágico que falava..."','"No 2º dia, os feijões incharam."','"Primeiro, colocamos algodão no copo."','"Concluímos que a semente precisa de água."'], e:'"Era uma vez" é começo de conto inventado. O relato conta fatos reais observados.'},
+ {t:'relato', q:'Quais palavras do relato mostram a ordem das ações?', o:['Primeiro, depois','Querida, abraço','Era uma vez','Palco, plateia'], e:'"Primeiro" e "depois" organizam o passo a passo.'},
+ {q:'Além do texto escrito, um relato de pesquisa pode ter...', o:['Tabelas, desenhos, fotos e datas','Só rimas','Falas de personagens com rubricas','Selo e CEP'], e:'Tabelas, desenhos e fotos ajudam a mostrar o que foi observado.'},
+ {t:'relato', q:'O que aconteceu PRIMEIRO com os feijões do copo A?', o:['Incharam e a casca rachou','Nasceu o caule verde','Apareceram as folhinhas','Apareceram raízes'], e:'No 2º dia incharam; as raízes vieram no 4º dia e o caule no 7º.'},
+ {t:'relato', q:'Por que a turma usou dois copos, um molhado e um seco?', o:['Para comparar e ver a diferença que a água faz','Porque sobrou um copo','Para ter mais feijão para comer','Para enfeitar a janela'], e:'Comparar é coisa de cientista: só a água mudava entre os copos, então deu para ver o efeito dela.'},
+ {type:'order', q:'Coloque as partes do relato de observação na ordem.', items:['Título','Objetivo','Materiais','Como fizemos','O que observamos','Conclusão'], e:'Título, objetivo, materiais, procedimento (como fizemos), observações e conclusão.'}
+],
+narrativa: [
+ {t:'historia', q:'Quem são os personagens da história?', o:['Pedro, Bia e o cachorrinho','Theo e a vovó','A professora e a turma','Só o Pedro'], e:'Personagens são quem participa da história: Pedro, Bia e o cachorro Caramelo.'},
+ {t:'historia', q:'Onde a história acontece (o espaço)?', o:['No parque do bairro, perto do lago','Na escola','Na praia','Dentro de casa'], e:'"Era uma tarde de sábado no parque do bairro... perto do lago."'},
+ {t:'historia', q:'Quando a história acontece (o tempo)?', o:['Numa tarde de sábado','Numa manhã de segunda-feira','À noite','No Natal'], e:'O tempo aparece logo no começo: "Era uma tarde de sábado".'},
+ {t:'historia', q:'Qual é o conflito (o problema) da história?', o:['A bola sumiu atrás dos arbustos','Os irmãos brigaram','Começou a chover','O cachorro mordeu o Pedro'], e:'O conflito é o problema que muda a situação: a bola desapareceu.'},
+ {t:'historia', q:'Qual é o clímax (o momento mais emocionante)?', o:['O cachorrinho aparece com a bola na boca','Os irmãos começam a jogar','O cachorro ganha um nome','Pedro vai para casa'], e:'O clímax é o ponto de maior emoção: eles ouvem um latido e o cachorro surge com a bola.'},
+ {t:'historia', q:'Como é o desfecho (o final)?', o:['O cachorro solta a bola e vira o "goleiro" do parque','A bola nunca é encontrada','Bia volta para casa chorando','Pedro compra uma bola nova'], e:'O desfecho resolve o problema: a bola volta e o cachorro vira amigo.'},
+ {t:'historia', q:'Por que Bia estava quase chorando?', o:['A bola era um presente do avô','Ela tinha se machucado','Ela perdeu o jogo','Estava com fome'], e:'"Bia já estava quase chorando, porque a bola era um presente do avô."'},
+ {t:'historia', q:'O narrador desta história...', o:['Conta de fora, sem participar (narrador observador)','É o Pedro, contando com "eu"','É o cachorro','Não existe narrador'], e:'O texto diz "Pedro chutou", "os dois procuraram". Se dissesse "eu chutei", o narrador seria personagem.'},
+ {t:'historia', q:'A expressão "De repente" indica...', o:['Algo que aconteceu de forma inesperada','Algo que acontece todo dia','O final da história','O nome do parque'], e:'"De repente" avisa que vem uma surpresa: é o começo do conflito.'},
+ {q:'Quais são os elementos da narrativa?', o:['Personagens, narrador, tempo, espaço e enredo','Saudação, corpo e assinatura','Objetivo, materiais e conclusão','Selo, CEP e envelope'], e:'Toda narrativa tem: quem (personagens), quem conta (narrador), quando (tempo), onde (espaço) e o que acontece (enredo).'},
+ {q:'Na narrativa, a "situação inicial" é...', o:['O começo, quando conhecemos os personagens e o lugar','O momento do problema','O final da história','O título'], e:'A situação inicial apresenta a história antes do problema aparecer.'},
+ {type:'order', q:'Coloque os acontecimentos da história na ordem.', items:['Pedro e Bia jogam bola no parque','Pedro chuta forte e a bola some','Eles ouvem um latido e o cachorro aparece com a bola','O cachorro solta a bola e vira o goleiro do parque'], e:'Situação inicial, conflito, clímax e desfecho.'}
+],
+teatro: [
+ {t:'teatro', q:'Os trechos entre parênteses, como "(assustada)", são chamados de...', o:['Rubricas','Falas','Títulos','Rimas'], e:'Rubricas são indicações para os atores: sentimentos, gestos, sons e cenário. Elas não são faladas.'},
+ {t:'teatro', q:'Como sabemos quem está falando no texto teatral?', o:['O nome do personagem vem antes da fala','Pelo narrador','Pela data','Pela assinatura'], e:'No texto teatral, cada fala começa com o nome do personagem: "PEDRO:", "BIA:".'},
+ {q:'Qual a principal diferença entre texto teatral e narrativa?', o:['O texto teatral é feito para ser encenado e não tem narrador','O texto teatral não tem personagens','A narrativa não tem história','O teatro sempre rima'], e:'No teatro, os personagens contam a história pelas falas e ações no palco.'},
+ {q:'Onde os atores se apresentam?', o:['No palco','Na plateia','Na coxia','No envelope'], e:'Palco é o espaço onde a peça é encenada.'},
+ {q:'Como se chama o lugar onde o público assiste à peça?', o:['Plateia','Palco','Cenário','Figurino'], e:'A plateia é onde fica o público.'},
+ {q:'As roupas e acessórios que os atores usam formam o...', o:['Figurino','Cenário','Roteiro','Clímax'], e:'Figurino = roupas, chapéus, máscaras dos personagens.'},
+ {q:'Os objetos e a decoração do palco que mostram onde a cena acontece formam o...', o:['Cenário','Figurino','Narrador','Selo'], e:'Cenário: os arbustos de papelão mostram que a cena é num parque.'},
+ {q:'A coxia é...', o:['O espaço ao lado do palco, escondido do público, onde os atores esperam','O lugar onde o público senta','A roupa do ator','A primeira fala'], e:'Coxia: os bastidores dos lados do palco.'},
+ {t:'teatro', q:'A rubrica "(Ouve-se um latido.)" indica...', o:['Um som que deve acontecer na cena','Uma fala da Bia','O nome do cachorro','O fim da peça'], e:'Rubricas também indicam sons e efeitos (sonoplastia).'},
+ {t:'teatro', q:'Em "BIA: (rindo) Olha quem achou a nossa bola!", a rubrica mostra...', o:['Como a personagem se sente ao falar','Onde a peça acontece','Quem escreveu a peça','A data da apresentação'], e:'"(rindo)" diz à atriz como falar: alegre.'},
+ {t:'teatro', q:'O texto teatral conta a mesma história de qual texto?', o:['O mistério da bola sumida','Carta para a vovó','O feijão que cresceu no algodão','Nenhum'], e:'É a história da bola sumida adaptada para o teatro: virou falas e rubricas.'},
+ {q:'Segundo o livro, o que acontece no teatro?', o:['As próprias personagens dão vida às ações diante do público','Um narrador lê a história em voz baixa','Ninguém fala nada','A história só é escrita, nunca apresentada'], e:'Nem toda história é contada por um narrador: no teatro, as personagens agem diante do público.'},
+ {q:'O Giramundo, de Belo Horizonte, é um grupo famoso de...', o:['teatro de bonecos (marionetes)','futebol','música clássica','dança de rua'], e:'Desde 1970 já criou mais de 40 peças, algumas com fábulas recontadas.'}
+],
+fabula: [
+ {q:'O que é uma fábula?', o:['Uma narrativa curta que transmite um ensinamento','Uma carta para a família','Um relato de experiência científica','Um texto só com rimas'], e:'As personagens geralmente são animais que agem como pessoas.'},
+ {q:'Nas fábulas, as personagens geralmente são...', o:['Animais com comportamentos humanos','Robôs','Só reis e rainhas','Plantas que não falam'], e:'Os animais falam, enganam, sentem vaidade e amizade, como as pessoas.'},
+ {q:'O que é a moral da fábula?', o:['O ensinamento da história','O nome do autor','O lugar onde ela acontece','A primeira frase'], e:'Toda fábula tem uma moral.'},
+ {q:'Quando a moral não está escrita e o leitor precisa descobrir, ela é...', o:['implícita','explícita','indireta','proparoxítona'], e:'Explícita = escrita no texto. Implícita = o leitor descobre pensando na história.'},
+ {t:'corvo', q:'A fábula "A raposa e o corvo" traz algum ensinamento?', o:['Sim: cuidado com quem elogia demais para conseguir algo','Não, é só uma história engraçada','Sim: corvos cantam bem','Sim: queijo faz mal'], e:'Toda fábula ensina algo! A raposa usou elogios falsos para pegar o queijo.'},
+ {q:'Esopo foi...', o:['Um grego considerado o primeiro criador de fábulas','Um carteiro famoso','O inventor da máquina de impressão','Um boneco do teatro Giramundo'], e:'Ele viveu no século 6 a.C. (antes de Cristo).'},
+ {q:'Qual destes escritores se inspirou nas fábulas de Esopo?', o:['Monteiro Lobato','Johannes Gutenberg','Frederick Frieseke','Jota Azevedo'], e:'Também La Fontaine, Ruth Rocha e Millôr Fernandes.'},
+ {q:'Como é o tempo nas fábulas?', o:['Indeterminado: "Era uma vez", "Certo dia", "Um dia"','Sempre com data e hora certas','Sempre no futuro','Só à noite'], e:'As lições das fábulas valem para qualquer época.'},
+ {t:'corvo', q:'Que estratégia a raposa usou para pegar o queijo?', o:['Elogiou o corvo para ele abrir o bico e cantar','Subiu na árvore','Pediu o queijo emprestado','Trocou por uma fruta'], e:'Ela bajulou o corvo: fez elogios falsos.'},
+ {q:'"Bajular" quer dizer...', o:['Fazer elogios, muitas vezes falsos, para conseguir o que quer','Brigar com alguém','Cantar alto','Dividir a comida'], e:'A raposa bajulou o corvo para ganhar o queijo.'},
+ {q:'"Plumagem" é...', o:['O conjunto de penas da ave','O bico da ave','O ninho','A voz do pássaro'], e:'A raposa elogiou a plumagem do corvo.'},
+ {t:'corvo', q:'Qual característica combina com o CORVO da fábula?', o:['Vaidade','Esperteza','Falsidade','Desonestidade'], e:'O corvo acreditou nos elogios: foi vaidoso e inocente.'},
+ {t:'corvo', q:'Qual característica combina com a RAPOSA da fábula?', o:['Esperteza','Inocência','Vaidade','Timidez'], e:'A raposa foi esperta, ágil, falsa e desonesta.'},
+ {t:'cegonha', q:'Por que a cegonha não conseguiu comer na casa da raposa?', o:['A comida mole estava numa pedra lisa e o bico dela é comprido','Ela não estava com fome','A comida estava quente','Ela chegou atrasada'], e:'Com o bico longo, ela só batia na pedra.'},
+ {t:'cegonha', q:'Por que a raposa não conseguiu comer na casa da cegonha?', o:['A comida estava em vasos altos e o focinho dela não alcançava','A comida era pouca','Ela chegou atrasada','Ela não gostava da comida'], e:'A cegonha fez com a raposa o mesmo que a raposa tinha feito com ela.'},
+ {t:'cegonha', q:'Qual é a moral mais adequada para "A cegonha e a raposa"?', o:['Não faça com os outros o que você não quer que façam com você','Quem canta seus males espanta','Devagar se vai ao longe','Quem procura acha'], e:'A raposa enganou a cegonha e depois recebeu o mesmo tratamento.'},
+ {t:'cegonha', q:'Qual expressão deixa o tempo indeterminado nessa fábula?', o:['"Um dia"','"Às 8 horas"','"No dia 6 de janeiro"','"Ontem à tarde"'], e:'"Um dia" e "Em outra ocasião" não dizem quando exatamente.'},
+ {t:'galo', q:'Por que o galo deixou a pérola onde estava?', o:['Ela não servia de comida para ele','Ela era muito pesada','Ele queria dar para a galinha','Ele tinha medo de joias'], e:'Para o galo com fome, comida valia mais que uma joia.'},
+ {t:'galo', q:'Qual moral combina com "O galo e a pérola"?', o:['O valor das coisas depende de quem precisa delas','Quem tem pressa come cru','A união faz a força','Mentira tem perna curta'], e:'Para o joalheiro a pérola é um tesouro; para o galo faminto, um grão de milho vale mais.'},
+ {q:'Em uma narrativa, as personagens são...', o:['Pessoas, animais ou seres mágicos que vivem as aventuras','Os lugares da história','O momento da história','O ensinamento final'], e:'Assim está no quadro do seu livro (p. 93).'},
+ {type:'order', t:'cegonha', q:'Coloque a fábula "A cegonha e a raposa" na ordem.', items:['A raposa convida a cegonha para jantar','A raposa serve sopa numa pedra lisa e a cegonha não consegue comer','A cegonha volta para casa com fome','A cegonha convida a raposa e serve a comida em vasos altos','A raposa volta para casa desapontada e com fome'], e:'Primeiro a raposa engana a cegonha; depois a cegonha devolve na mesma moeda.'}
+],
+discurso: [
+ {q:'No discurso direto, a fala do personagem aparece...', o:['Do jeito que ele falou, com dois-pontos e travessão','Contada pelo narrador, sem travessão','Só no título','Entre parênteses'], e:'Ex.: A raposa disse:<br>— Bom dia, senhor corvo!'},
+ {q:'No discurso indireto...', o:['O narrador conta o que o personagem disse','O personagem fala com travessão','Não existe narrador','Só aparecem rubricas'], e:'Ex.: A raposa deu bom-dia ao corvo e disse que ele era bonito.'},
+ {q:'Qual frase está em discurso DIRETO?', o:['A raposa disse: — Que penas lindas!','A raposa disse que as penas eram lindas.','A raposa elogiou as penas do corvo.','A raposa comeu o queijo.'], e:'Dois-pontos e travessão mostram a fala do jeito que foi dita.'},
+ {q:'Qual frase está em discurso INDIRETO?', o:['O galo disse que a pérola não servia para ele.','O galo disse: — Esta pérola não me serve!','— Ei, galo! — chamou o papagaio.','O papagaio perguntou: — Por que você não vende a pérola?'], e:'O narrador conta o que o galo disse, sem travessão.'},
+ {q:'Quais sinais de pontuação avisam que um personagem vai falar?', o:['Dois-pontos e travessão','Ponto-final e vírgula','Vírgula e travessão','Parênteses e aspas'], e:'Ex.: começou a bajular o corvo: — Ó senhor corvo!'},
+ {q:'Em "encontrou um papagaio que lhe disse:", qual palavra mostra que o papagaio vai falar?', o:['disse','papagaio','encontrou','lhe'], e:'"disse" é um verbo de fala (dizer).'},
+ {q:'Qual verbo também pode anunciar a fala de um personagem?', o:['perguntou','correu','dormiu','comeu'], e:'Verbos de fala: disse, falou, perguntou, respondeu, gritou, exclamou...'},
+ {q:'Transforme em discurso indireto: Bia perguntou: — Cadê a bola?', o:['Bia perguntou onde estava a bola.','Bia perguntou: cadê a bola.','— Cadê a bola, Bia?','Bia: — Cadê?'], e:'No indireto, o narrador reconta a pergunta, sem travessão.'},
+ {q:'Em "Será que isso vai dar certo?", o ponto de interrogação mostra...', o:['Dúvida','Raiva','Tristeza','Alegria'], e:'O ? mostra pergunta ou dúvida.'},
+ {q:'Em "Só sei que amei a experiência!", o ponto de exclamação mostra...', o:['Animação','Raiva','Dúvida','Medo'], e:'O ! mostra emoção forte: alegria, animação, susto.'},
+ {q:'"Jogamos dama, cantamos e até dançamos, acredita?!" Os sinais ?! juntos mostram...', o:['Surpresa e animação ao mesmo tempo','Tristeza','Que a frase acabou','Uma ordem'], e:'Lili pergunta e se empolga ao mesmo tempo.'},
+ {t:'cegonha', q:'O discurso da fábula "A cegonha e a raposa" é...', o:['Indireto: o narrador conta tudo, sem falas com travessão','Direto: tem muitas falas com travessão','Teatral: tem rubricas','Não tem narrador'], e:'Nenhum animal fala com travessão: o narrador conta o que aconteceu.'},
+ {t:'corvo', q:'Na fábula "A raposa e o corvo", de quem é a fala "— Bom dia, senhor corvo!"?', o:['Da raposa','Do corvo','Do narrador','Do queijo'], e:'É a raposa bajulando o corvo para pegar o queijo.'},
+ {q:'Ao escrever um diálogo, cada fala deve...', o:['Começar com travessão, em uma linha nova','Ficar entre parênteses','Vir sem pontuação','Ser escrita pelo narrador com "que"'], e:'Exemplo:<br>— Desculpe, corvo — disse a raposa.<br>— Eu desculpo — respondeu o corvo.'}
+]
+};
+
+/* ===================== AULAS ===================== */
+const SAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>';
+function textBox(key, labeled){
+  const T = TEXTS[key];
+  let html = T.html;
+  if (labeled && key==='carta'){
+    html = `
+    <div class="part"><span class="tag">Local e data</span><p>Rio de Janeiro, 9 de novembro de 2026.</p></div>
+    <div class="part"><span class="tag">Saudação</span><p>Querida vovó Lia,</p></div>
+    <div class="part"><span class="tag">Corpo da carta</span><div style="display:flex;flex-direction:column;gap:8px"><p>Estou com muita saudade de você e do seu bolo de cenoura! Aqui em casa está tudo bem. Na semana passada, a minha turma fez uma experiência de ciências: plantamos feijões no algodão e vimos as raízes nascerem. Eu fui o responsável por regar todos os dias!</p><p>No sábado, fui à praia com o papai e construímos um castelo de areia enorme. Uma onda derrubou tudo, mas a gente riu muito.</p><p>Quando você vier nas férias, quero te mostrar o meu feijãozinho, que já está bem alto.</p></div></div>
+    <div class="part"><span class="tag">Despedida</span><p>Um abraço bem apertado do seu neto,</p></div>
+    <div class="part"><span class="tag">Assinatura</span><p>Theo</p></div>
+    <div class="part"><span class="tag">P.S.</span><p>P.S.: Não esqueça de trazer a receita do bolo!</p></div>`;
+  }
+  return `<div class="text" id="txt-${key}${labeled?'-l':''}">${html}</div>
+    <button class="say" onclick="falarEl('txt-${key}${labeled?'-l':''}')">${SAY_ICON} Ouvir o texto</button>`;
+}
+
+const LESSONS = {
+tonica: () => `
+  <p class="big">Sílaba tônica é a sílaba que a gente fala com MAIS FORÇA.</p>
+  <p>Truque: fale a palavra como se estivesse chamando alguém lá longe. Café vira "ca-FÉÉÉ!". Boneca vira "bo-NÉÉÉ-ca!". A sílaba que estica é a tônica.</p>
+  <p class="big">Agora conte as sílabas DE TRÁS PARA A FRENTE:</p>
+  <div class="tblwrap"><table>
+    <tr><th>A sílaba forte é a...</th><th>Nome</th><th>Exemplos</th></tr>
+    <tr><td><b>1ª do fim</b> (última)</td><td class="t">OXÍTONA</td><td>ca-<b>FÉ</b>, so-<b>FÁ</b>, ja-ca-<b>RÉ</b>, a-ba-ca-<b>XI</b>, pa-<b>PEL</b></td></tr>
+    <tr><td><b>2ª do fim</b> (penúltima)</td><td class="t">PAROXÍTONA</td><td>bo-<b>NE</b>-ca, es-<b>CO</b>-la, ja-<b>NE</b>-la, <b>LÁ</b>-pis</td></tr>
+    <tr><td><b>3ª do fim</b> (antepenúltima)</td><td class="t">PROPAROXÍTONA</td><td><b>MÉ</b>-di-co, <b>PÁS</b>-sa-ro, <b>LÂM</b>-pa-da, ma-te-<b>MÁ</b>-ti-ca</td></tr>
+  </table></div>
+  <div class="good"><b>Truque do nome:</b> quanto MAIOR o nome, mais LONGE do fim fica a sílaba forte.<br>
+  OXÍTONA (nome curto) = última · PAROXÍTONA (médio) = penúltima · PROPAROXÍTONA (o maior) = antepenúltima.</div>
+  <div class="alert"><b class="h">Atenção, Samuel!</b>
+    <span>Oxítona NÃO é a sílaba do começo. É a <b>ÚLTIMA</b>.</span>
+    <span>Proparoxítona NÃO é a do final. É a <b>3ª contando do fim</b>.</span>
+    <span>Sofá e café são <b>oxítonas</b> (so-FÁ, ca-FÉ). Matemática é <b>proparoxítona</b> (ma-te-MÁ-ti-ca).</span></div>
+  <p class="big">E os acentos?</p>
+  <ul>
+    <li><b>Proparoxítonas:</b> TODAS têm acento (médico, pássaro, música).</li>
+    <li><b>Paroxítonas:</b> a maioria NÃO tem acento (casa, boneca, escola). Algumas têm: fácil, lápis, açúcar, álbum.</li>
+    <li><b>Oxítonas:</b> têm acento quando terminam em A, E, O, EM, ENS (veja a Praia das Oxítonas).</li>
+  </ul>`,
+oxitona: () => `
+  <p class="big">Oxítona é a palavra em que a ÚLTIMA sílaba é a mais forte.</p>
+  <p>ca-<b>FÉ</b> · ja-ca-<b>RÉ</b> · a-<b>VÓ</b> · so-<b>FÁ</b> · co-ra-<b>ÇÃO</b></p>
+  <p class="big">Quando a oxítona leva acento?</p>
+  <div class="tblwrap"><table>
+    <tr><th>Termina em...</th><th>Leva acento?</th><th>Exemplos</th></tr>
+    <tr><td><b>A, E, O</b> (com ou sem S)</td><td class="t" style="--wc:var(--ok)">SIM</td><td>sofá, maracujás, café, bebê, cipó, vovô</td></tr>
+    <tr><td><b>EM, ENS</b></td><td class="t" style="--wc:var(--ok)">SIM</td><td>também, ninguém, parabéns</td></tr>
+    <tr><td><b>I, U, R, L, Z</b> e outras</td><td class="t" style="--wc:var(--bad)">NÃO</td><td>abacaxi, caju, amor, papel, rapaz</td></tr>
+  </table></div>
+  <div class="good"><b>Acento agudo ( ´ )</b> = som aberto: avó, café, cipó.<br><b>Acento circunflexo ( ^ )</b> = som fechado: avô, bebê, vovô.</div>
+  <div class="alert"><b class="h">Cuidado!</b><span>Nem toda oxítona tem acento: a-MOR, pa-PEL e ca-JU são oxítonas e não têm acento.</span></div>`,
+mono: () => `
+  <p class="big">Monossílabo é a palavra que tem só UMA sílaba.</p>
+  <p>pé · sol · céu · nó · flor · mar · três</p>
+  <p>Alguns monossílabos são <b>fortes</b> (tônicos), falados com força: pé, mar, sol. Outros são <b>fracos</b> (átonos), quase não têm força: o, a, de, em, e, que.</p>
+  <p class="big">Quais monossílabos levam acento?</p>
+  <div class="good">Como diz o livro: os monossílabos <b>tônicos</b> terminados em <b>a, as, e, es, o, os</b>:<br>
+  pá · lá · cá · gás · pé · fé · três · pó · só · xô · nós · chá · mês</div>
+  <p><b>Desafio do carteiro (livro, p. 23):</b> o caminho certo era <b>pé, gás, três, ré, chá</b>: todos levam acento.</p>
+  <p>Também levam acento os que têm som aberto <b>éu, éi, ói</b>: céu, véu, dói.</p>
+  <p><b>Não levam acento:</b> sol, flor, mar, luz, mel, paz (não terminam em A, E, O).</p>
+  <div class="alert"><b class="h">Pares que confundem</b>
+    <span><b>dá</b> (verbo dar, forte): "Ele dá um presente." · <b>da</b> (fraco): "A casa da vovó."</span>
+    <span><b>é</b> (verbo ser, forte): "O céu é azul." · <b>e</b> (fraco, junta palavras): "pão e leite".</span></div>`,
+carta: () => `
+  <p class="big">Carta pessoal leva uma mensagem a uma pessoa conhecida: família ou amigos.</p>
+  <p>Serve para contar novidades, mostrar saudade, agradecer, convidar. A linguagem é <b>informal e carinhosa</b>. Quem escreve é o <b>remetente</b>; quem recebe é o <b>destinatário</b>.</p>
+  <p class="big">As 5 partes da carta, como no seu livro:</p>
+  <p>Local e data → Saudação → Corpo da carta → Despedida → Assinatura</p>
+  ${textBox('carta', true)}
+  <p class="sub">O P.S. (pós-escrito) é opcional: um recado lembrado depois da assinatura.</p>
+  <p class="big">No envelope:</p>
+  <ul>
+    <li><b>Destinatário:</b> quem RECEBE: nome e endereço completo com CEP.</li>
+    <li><b>Remetente:</b> quem ENVIA: nome e endereço completo com CEP.</li>
+    <li><b>CEP:</b> 8 algarismos que mostram a região do país e as subdivisões. Ajudam o correio a entregar mais rápido.</li>
+    <li><b>Selo:</b> paga o envio pelo correio.</li>
+  </ul>
+  <div class="tblwrap"><table>
+    <tr><th></th><th>Carta</th><th>E-mail</th></tr>
+    <tr><td><b>Como chega</b></td><td>Pelo correio, com o carteiro</td><td>Pela internet</td></tr>
+    <tr><td><b>Quanto demora</b></td><td>Dias. Antigamente, até meses: ia de navio, trem, cavalo e pombo-correio</td><td>Quase na hora</td></tr>
+    <tr><td><b>Quem recebe</b></td><td>Nome e endereço no envelope</td><td>Campo "Para:"</td></tr>
+    <tr><td><b>Quem envia</b></td><td>Remetente no envelope</td><td>Campo "De:"</td></tr>
+  </table></div>
+  <p class="big">Diário</p>
+  <p>Parece uma carta (tem data, saudação, corpo e despedida), mas é escrito <b>para nós mesmos</b>. É pessoal e não é para ser compartilhado. Serve para registrar o que acontece e organizar os pensamentos.</p>
+  <div class="good"><b>Lembra do seu livro (capítulo 9)?</b>
+    <ul>
+      <li><b>De carta em carta</b> (Ana Maria Machado): Pepe pede ao escrevedor seu Miguel que escreva ao avô José, um jardineiro muito cansado. Depois escreve ao governo pedindo a aposentadoria do avô. Pepe cresce e vai trabalhar no posto de atendimento do governo.</li>
+      <li>A carta de <b>Carolina</b>, de Barcelona, para o primo <b>Lucas</b>, contando a tradição dos Três Reis Magos (Melchior, Gaspar e Baltazar).</li>
+      <li>A carta de <b>Frederico</b> para a <b>tia Raquel</b>.</li>
+      <li>O diário da <b>Lili</b>: o chá de aniversário da avó, com biscoitos de mel, histórias, jogo de dama e dança. Os <b>pés</b> doeram depois!</li>
+      <li>Curiosidades: Gutenberg e a máquina de impressão; caligrafia quer dizer "escrita bela"; arte rupestre nas cavernas (Serra da Capivara, no Piauí); o papiro dos egípcios; a profissão de carteiro.</li>
+    </ul></div>`,
+relato: () => `
+  <p class="big">O relato de observação e pesquisa é o texto do cientista mirim.</p>
+  <p>Ele registra o que foi feito e observado em uma experiência ou pesquisa, com informações reais.</p>
+  <p class="big">Partes do relato:</p>
+  <ul>
+    <li><b>Título</b>: o nome da pesquisa.</li>
+    <li><b>Objetivo</b>: o que queríamos descobrir.</li>
+    <li><b>Materiais</b>: o que usamos.</li>
+    <li><b>Como fizemos</b> (procedimento): o passo a passo.</li>
+    <li><b>O que observamos</b> (resultados): o que aconteceu, com datas, tabelas, desenhos ou fotos.</li>
+    <li><b>Conclusão</b>: o que aprendemos.</li>
+  </ul>
+  <div class="good"><b>Como se escreve:</b> verbos no passado (plantamos, observamos), muitas vezes com "nós"; palavras de ordem (primeiro, depois, no 2º dia); linguagem clara e sem inventar nada.</div>
+  <p class="big">Leia o relato:</p>
+  ${textBox('relato')}`,
+palco: () => `
+  <p class="big">Elementos da narrativa</p>
+  <ul>
+    <li><b>Personagens:</b> quem participa da história.</li>
+    <li><b>Narrador:</b> quem conta. <i>Narrador personagem</i> participa e usa "eu". <i>Narrador observador</i> conta de fora: "ele", "ela".</li>
+    <li><b>Tempo:</b> quando acontece.</li>
+    <li><b>Espaço:</b> onde acontece.</li>
+    <li><b>Enredo:</b> o que acontece, em 4 partes: <b>situação inicial</b> → <b>conflito</b> (o problema) → <b>clímax</b> (momento mais emocionante) → <b>desfecho</b> (o final).</li>
+  </ul>
+  ${textBox('historia')}
+  <p class="big">Narrativas em espaços teatrais</p>
+  <p>Nem toda história é contada por um narrador. No teatro, as próprias personagens dão vida às ações diante do público. O livro mostra o <b>Giramundo Teatro de Bonecos</b>, de Belo Horizonte: desde 1970 o grupo já criou mais de 40 peças com marionetes, algumas com fábulas.</p>
+  <p>O <b>texto teatral</b> é escrito para ser encenado. Não tem narrador: a história aparece nas <b>falas</b> dos personagens (o nome vem antes da fala) e nas <b>rubricas</b>, que ficam entre parênteses e dizem gestos, sentimentos, sons e cenário.</p>
+  <div class="tblwrap"><table>
+    <tr><th>Espaço teatral</th><th>O que é</th></tr>
+    <tr><td><b>Palco</b></td><td>Onde os atores se apresentam.</td></tr>
+    <tr><td><b>Plateia</b></td><td>Onde o público assiste.</td></tr>
+    <tr><td><b>Cenário</b></td><td>A decoração que mostra onde a cena acontece.</td></tr>
+    <tr><td><b>Figurino</b></td><td>As roupas e acessórios dos personagens.</td></tr>
+    <tr><td><b>Coxia</b></td><td>Os bastidores ao lado do palco, onde os atores esperam.</td></tr>
+  </table></div>
+  ${textBox('teatro')}`,
+fabula: () => `
+  <p class="big">Fábula é uma narrativa curta que ensina alguma coisa.</p>
+  <p>As personagens geralmente são <b>animais com comportamentos humanos</b>: falam, enganam, sentem vaidade, inveja e amizade.</p>
+  <div class="good"><b>Moral</b> é o ensinamento da fábula. Ela pode ser <b>explícita</b> (escrita no texto) ou <b>implícita</b> (o leitor precisa descobrir).</div>
+  <div class="alert"><b class="h">Atenção, Samuel!</b><span>TODA fábula traz um ensinamento. Se a prova perguntar "a história ensina alguma coisa?", a resposta é SIM. Depois explique qual é a moral.</span></div>
+  <ul>
+    <li><b>Esopo:</b> um grego que viveu no século 6 a.C. e é considerado o primeiro criador de fábulas. Inspirou La Fontaine, Monteiro Lobato, Ruth Rocha e Millôr Fernandes.</li>
+    <li><b>Narrador:</b> conta a história. Pode participar dela ou não.</li>
+    <li><b>Personagens:</b> pessoas, animais ou seres mágicos que vivem as aventuras.</li>
+    <li><b>Tempo:</b> nas fábulas é indeterminado: "Era uma vez", "Certo dia", "Um dia", "Há muito tempo". As lições valem para sempre.</li>
+    <li><b>Espaço:</b> o lugar da história: floresta, jardim, caverna, castelo, terreiro.</li>
+    <li><b>Enredo:</b> como a história é organizada: situação inicial, conflito, clímax e desfecho.</li>
+  </ul>
+  <p class="big">Fábulas do seu livro, recontadas:</p>
+  ${textBox('corvo')}
+  <p><b>Palavras do texto:</b> <i>bajular</i> = fazer elogios, muitas vezes falsos, para conseguir o que quer. <i>Plumagem</i> = conjunto de penas. Corvo: vaidade e inocência. Raposa: esperteza, agilidade, falsidade e desonestidade.</p>
+  ${textBox('cegonha')}
+  ${textBox('galo')}`,
+discurso: () => `
+  <p class="big">Existem dois jeitos de mostrar a fala das personagens.</p>
+  <div class="tblwrap"><table>
+    <tr><th></th><th>Discurso direto</th><th>Discurso indireto</th></tr>
+    <tr><td><b>Como é</b></td><td>A fala aparece do jeito que a personagem disse</td><td>O narrador conta o que a personagem disse</td></tr>
+    <tr><td><b>Sinais</b></td><td>Dois-pontos ( : ) e travessão ( — )</td><td>Sem travessão. Costuma usar "que" ou "se"</td></tr>
+    <tr><td><b>Exemplo</b></td><td>A raposa disse:<br>— Que penas lindas, senhor corvo!</td><td>A raposa disse que as penas do corvo eram lindas.</td></tr>
+  </table></div>
+  <div class="good"><b>Verbos que anunciam uma fala:</b> disse, falou, perguntou, respondeu, gritou, pediu, exclamou, sussurrou.</div>
+  <div class="alert"><b class="h">Atenção, Samuel!</b><span>Quando pedirem um diálogo, escreva cada fala em uma linha nova, começando com travessão ( — ). Se você só contar o que aconteceu, vira discurso indireto.</span></div>
+  <div class="text">
+    <p>A raposa voltou à árvore e disse:</p>
+    <p>— Desculpe, corvo. Eu enganei você.</p>
+    <p>— Tudo bem, eu desculpo — respondeu o corvo. — Mas da próxima vez peça o queijo!</p>
+  </div>
+  <p class="big">A pontuação mostra emoções</p>
+  <ul>
+    <li><b>?</b> pergunta ou dúvida: "Será que isso vai dar certo?"</li>
+    <li><b>!</b> alegria, animação, susto: "Amei a experiência!"</li>
+    <li><b>?!</b> surpresa e animação juntas: "Até dançamos, acredita?!"</li>
+  </ul>`
+};
+
+/* ===================== MUNDOS ===================== */
+const WORLDS = [
+  {id:'tonica', nome:'Ilha da Sílaba Forte', cap:'Cap. 8 e 10', glifo:'ca-FÉ', cor:'--w1', desc:'Sílaba tônica: oxítona, paroxítona ou proparoxítona?',
+   build(){ const ws = shuffle([...new Set([...pick(FOCO,3), ...pick(WORDS,9)])]).slice(0,8); return shuffle([...ws.map(tonicItem), ...pick(MC.tonica,3).map(m=>({...m,type:'mc'}))]).map(x=>({...x,topic:'tonica'})); }},
+  {id:'oxitona', nome:'Praia das Oxítonas', cap:'Cap. 10', glifo:'so-FÁ', cor:'--w2', desc:'Quando a oxítona leva acento?',
+   build(){ return [...pick(MC.oxitona,7).map(m=>({...m,type:'mc'})), ...pick(WORDS.filter(w=>parseWord(w).cls==='oxítona'),3).map(tonicItem)].map(x=>({...x,topic:'oxitona'})); }},
+  {id:'mono', nome:'Vila dos Monossílabos', cap:'Cap. 9', glifo:'pé · nó', cor:'--w3', desc:'Palavras de uma sílaba e seus acentos',
+   build(){ return pick(MC.mono,10).map(m=>({...m,type:'mc',topic:'mono'})); }},
+  {id:'carta', nome:'Correio do Coração', cap:'Cap. 9', glifo:'Querida…', cor:'--w4', desc:'Carta pessoal, envelope, e-mail e diário',
+   build(){ const ord = MC.carta.filter(m=>m.type==='order'); return [...pick(MC.carta.filter(m=>m.type!=='order'),9).map(m=>({...m,type:'mc'})), ...ord].map(x=>({...x,topic:'carta'})); }},
+  {id:'relato', nome:'Laboratório Mirim', cap:'Cap. 8', glifo:'2º dia', cor:'--w5', desc:'Relato de observação e pesquisa',
+   build(){ const ord = MC.relato.filter(m=>m.type==='order'); return [...pick(MC.relato.filter(m=>m.type!=='order'),9).map(m=>({...m,type:'mc'})), ...ord].map(x=>({...x,topic:'relato'})); }},
+  {id:'fabula', nome:'Floresta das Fábulas', cap:'Cap. 10', glifo:'Moral', cor:'--w7', desc:'Fábula, moral, Esopo e as fábulas do livro',
+   build(){ const ord = MC.fabula.filter(m=>m.type==='order'); return [...pick(MC.fabula.filter(m=>m.type!=='order'),9).map(m=>({...m,type:'mc'})), ...ord].map(x=>({...x,topic:'fabula'})); }},
+  {id:'discurso', nome:'Ponte das Falas', cap:'Cap. 9 e 10', glifo:'— Oi!', cor:'--w8', desc:'Discurso direto e indireto; pontuação e emoção',
+   build(){ return pick(MC.discurso,10).map(m=>({...m,type:'mc',topic:'discurso'})); }},
+  {id:'palco', nome:'Palco das Histórias', cap:'Cap. 10', glifo:'(rindo)', cor:'--w6', desc:'Elementos da narrativa e texto teatral',
+   build(){ const ord = MC.narrativa.filter(m=>m.type==='order'); return [...pick(MC.narrativa.filter(m=>m.type!=='order'),5), ...pick(MC.teatro,5), ...ord].map(m=>({...m,type:m.type||'mc',topic:'palco'})); }}
+];
+const TOPIC_NAMES = {tonica:'Sílaba tônica', oxitona:'Acento das oxítonas', mono:'Monossílabos', carta:'Carta pessoal', relato:'Relato de observação', fabula:'Fábulas', discurso:'Discurso direto e indireto', palco:'Narrativa e teatro'};
+
+function tonicItem(s){ return {type:'tonic', w:parseWord(s), key:s}; }
+function buildSimulado(){
+  const mc = (arr,n,topic) => pick(arr.filter(m=>m.type!=='order'),n).map(m=>({...m,type:'mc',topic}));
+  return [
+    ...[...pick(FOCO,2), ...pick(WORDS,3)].filter((v,i,a)=>a.indexOf(v)===i).slice(0,3).map(s=>({...tonicItem(s),topic:'tonica'})),
+    ...mc(MC.tonica,1,'tonica'), ...mc(MC.oxitona,2,'oxitona'), ...mc(MC.mono,2,'mono'),
+    ...mc(MC.carta,2,'carta'), ...mc(MC.relato,1,'relato'),
+    ...mc(MC.fabula,2,'fabula'), ...mc(MC.discurso,1,'discurso'),
+    ...mc([...MC.narrativa, ...MC.teatro],1,'palco')
+  ];
+}
+
+/* ===================== UTILIDADES ===================== */
+const app = document.getElementById('app');
+function shuffle(a){ a=[...a]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function pick(a,n){ return shuffle(a).slice(0,n); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+const canSpeak = (()=>{ try{ return 'speechSynthesis' in window; }catch(e){ return false; } })();
+function falar(t){ try{ const u=new SpeechSynthesisUtterance(t); u.lang='pt-BR'; u.rate=0.85; speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(e){} }
+function falarEl(id){ const el=document.getElementById(id); if(el) falar(el.innerText); }
+function starsHtml(n){ let s=''; for(let i=0;i<3;i++) s+=`<span class="${i<n?'on':''}">★</span>`; return `<span class="stars" aria-label="${n} de 3 estrelas">${s}</span>`; }
+function irTopo(){ try{ window.scrollTo({top:0}); }catch(e){} }
+
+/* ===================== PROGRESSO (só neste aparelho) ===================== */
+const KEY='samuel-portugues-av2-v1';
+let S = load();
+function load(){ try{ const v=JSON.parse(localStorage.getItem(KEY)); if(v && v.worlds) return v; }catch(e){} return {xp:0, worlds:{}, topics:{}, missed:{}, simBest:null, simCount:0}; }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+const totalStars = () => WORLDS.reduce((a,w)=>a+((S.worlds[w.id]||{}).stars||0),0);
+
+/* ===================== TELA INICIAL ===================== */
+function renderHome(){
+  const ts = totalStars();
+  const weak = Object.keys(TOPIC_NAMES).map(k=>{ const t=S.topics[k]; return t&&t.total>=4?{k,p:t.ok/t.total}:null; }).filter(Boolean).sort((a,b)=>a.p-b.p)[0];
+  let tip = 'Dica: comece pela <b>Ilha da Sílaba Forte</b>. É o assunto que mais aparece nas fichas.';
+  if (weak && weak.p < 0.8) tip = `Treine mais: <b>${TOPIC_NAMES[weak.k]}</b> (você acertou ${Math.round(weak.p*100)}% até agora).`;
+  else if (ts >= WORLDS.length*3 - 3) tip = 'Você está voando! Faça o <b>Simulado da prova</b> para ver sua nota.';
+  app.innerHTML = `
+    <div class="top">
+      <div class="hello">
+        <h1>Olá, Samuel!</h1>
+        <span class="exam">Prova de Português · segunda, 16/11</span>
+      </div>
+      <div class="chips"><span class="chip"><span class="s">★</span> ${ts} / ${WORLDS.length*3}</span><span class="chip">${S.xp} pontos</span></div>
+    </div>
+    <div class="tipbar">${tip}</div>
+    <div class="grid">
+      ${WORLDS.map(w=>{ const r=S.worlds[w.id]||{}; return `
+        <button class="world" style="--wc:var(${w.cor})" onclick="renderLesson('${w.id}')">
+          <span class="glyph">${w.glifo}<small>${w.cap}</small></span>
+          <span class="body"><h3>${w.nome}</h3><span class="desc">${w.desc}</span>${starsHtml(r.stars||0)}</span>
+        </button>`; }).join('')}
+    </div>
+    <button class="sim" onclick="startSim()">
+      <span style="display:flex;flex-direction:column;gap:4px"><h2>Simulado da prova</h2>
+      <span>15 questões misturadas, nota de 0 a 10${S.simBest!=null?` · melhor nota: <b>${fmt(S.simBest)}</b>`:''}</span></span>
+      <span class="go">Começar</span>
+    </button>
+    <button class="linkbtn" onclick="renderParents()">Painel da família: ver onde o Samuel mais erra</button>
+    <p class="foot">AV2 · 3ª etapa · 3º ano · Capítulos 8, 9 e 10. O progresso fica salvo neste aparelho.</p>`;
+  irTopo();
+}
+const fmt = n => n.toFixed(1).replace('.',',');
+
+/* ===================== AULA ===================== */
+function renderLesson(id){
+  const w = WORLDS.find(x=>x.id===id);
+  app.innerHTML = `
+    <button class="btn ghost back" onclick="renderHome()">← Mapa</button>
+    <div class="card" style="--wc:var(${w.cor});border-bottom-color:var(${w.cor})">
+      <span class="sub">${w.cap} · Relembre antes de jogar</span>
+      <h2>${w.nome}</h2>
+      <div class="lesson">${LESSONS[id]()}</div>
+      <div class="row"><button class="btn" style="background:var(${w.cor})" onclick="startWorld('${id}')">Começar o desafio</button></div>
+    </div>`;
+  irTopo();
+}
+
+/* ===================== DESAFIO ===================== */
+let Q = null;
+const PRAISE = ['Mandou bem!','Isso aí, Samuel!','Perfeito!','Acertou!','Muito bem!'];
+const OOPS = ['Quase! Veja a explicação:','Não foi dessa vez. Vamos entender:','Opa! Olha só:'];
+function startWorld(id){ const w=WORLDS.find(x=>x.id===id); startQuiz(w.build(), {world:id, cor:w.cor, nome:w.nome}); }
+function startSim(){ startQuiz(shuffle(buildSimulado()), {sim:true, cor:'--w1', nome:'Simulado da prova'}); }
+function startQuiz(items, ctx){ Q = {items, i:0, score:0, combo:0, best:0, wrong:[], ctx}; initItem(); renderQ(); }
+function initItem(){
+  const it = Q.items[Q.i];
+  Q.answered=false; Q.phase=1; Q.picked=null; Q.tonicOk=false; Q.clsPicked=null; Q.lastOk=null; Q.optPicked=null; Q.sel=[];
+  if (it.type==='mc') Q.opts = shuffle(it.o);
+  if (it.type==='order') Q.pool = shuffle(it.items);
+}
+function renderQ(){
+  const it = Q.items[Q.i], n=Q.items.length;
+  const pct = Math.round((Q.i)/n*100);
+  let body='';
+  if (it.type==='mc') body = mcHtml(it);
+  else if (it.type==='tonic') body = tonicHtml(it);
+  else body = orderHtml(it);
+  app.innerHTML = `
+    <div class="row" style="justify-content:space-between">
+      <button class="btn ghost back" onclick="renderHome()">← Sair</button>
+      <span class="chip">${Q.score} acertos</span>
+    </div>
+    <div class="card" style="--wc:var(${Q.ctx.cor})">
+      <div class="qhead"><span>${Q.ctx.nome} · ${Q.i+1} de ${n}</span>${Q.combo>=3?`<span class="combo">${Q.combo} seguidas!</span>`:''}</div>
+      <div class="prog"><i style="width:${pct}%"></i></div>
+      ${body}
+    </div>`;
+}
+function textDetails(it){
+  if(!it.t) return '';
+  return `<details><summary>Ler o texto: ${TEXTS[it.t].titulo}</summary>${textBox(it.t)}</details>`;
+}
+function fbHtml(ok, exp, extra){
+  return `<div class="fb ${ok?'ok':'no'}"><b class="h">${ok?PRAISE[Math.floor(Math.random()*PRAISE.length)]:OOPS[Math.floor(Math.random()*OOPS.length)]}</b>
+    ${extra||''}<span>${exp||''}</span></div>
+    <div class="row"><button class="btn" id="nextbtn" onclick="nextQ()">${Q.i+1<Q.items.length?'Próxima →':'Ver resultado'}</button></div>`;
+}
+/* múltipla escolha */
+function mcHtml(it){
+  const opts = Q.opts.map((o,i)=>{
+    let c='opt';
+    if (Q.answered){ if(o===it.o[0]) c+=' right'; else if(i===Q.optPicked) c+=' wrong'; }
+    return `<button class="${c}" ${Q.answered?'disabled':''} onclick="answerMC(${i})">${esc(o)}</button>`;
+  }).join('');
+  return `${textDetails(it)}<p class="q">${esc(it.q)}</p><div class="opts">${opts}</div>${Q.answered?fbHtml(Q.lastOk, it.e, Q.lastOk?'':`<span>Resposta certa: <b>${esc(it.o[0])}</b></span>`):''}`;
+}
+function answerMC(i){
+  if (Q.answered) return;
+  const it=Q.items[Q.i]; Q.optPicked=i;
+  const ok = Q.opts[i]===it.o[0];
+  record(it, ok, it.q, it.o[0], it.e);
+  renderQ(); focusNext();
+}
+/* sílaba forte */
+function tonicHtml(it){
+  const w=it.w, L=w.syl.length;
+  const tiles = w.syl.map((s,i)=>{
+    let c='syl';
+    if (Q.phase>1){ if(i===w.t) c+=' hit'; else if(i===Q.picked) c+=' miss'; }
+    return `<div class="sylcol"><button class="${c}" ${Q.phase>1?'disabled':''} onclick="pickSyl(${i})">${s}</button><span class="pos">${Q.phase>1?POSNAME(L-i):''}</span></div>`;
+  }).join('');
+  const say = canSpeak?`<button class="say" onclick="falar('${w.word}')">${SAY_ICON} Ouvir a palavra</button>`:'';
+  let html = `<p class="q">${Q.phase===1?'Toque na sílaba mais forte:':'Agora classifique a palavra:'}</p>
+    <div class="syls">${tiles}</div><div class="row" style="justify-content:center">${say}</div>`;
+  if (Q.phase>=2){
+    const strong = w.syl[w.t].toUpperCase();
+    html += Q.tonicOk ? `<p class="sub" style="color:var(--ok)">Isso! A sílaba forte é ${strong}.</p>`
+                      : `<p class="sub" style="color:var(--bad)">A sílaba forte é ${strong}, não ${w.syl[Q.picked].toUpperCase()}. Fale chamando: "${w.syl.map((s,i)=>i===w.t?s.toUpperCase():s).join('-')}!"</p>`;
+    const cls = ['oxítona','paroxítona','proparoxítona'].map(c=>{
+      let k='opt';
+      if (Q.answered){ if(c===w.cls) k+=' right'; else if(c===Q.clsPicked) k+=' wrong'; }
+      return `<button class="${k}" style="text-align:center" ${Q.answered?'disabled':''} onclick="pickCls('${c}')">${c}</button>`;
+    }).join('');
+    html += `<div class="cls3">${cls}</div>`;
+  }
+  if (Q.answered){
+    const fe = L - w.t; const marked = w.syl.map((s,i)=>i===w.t?s.toUpperCase():s).join('-');
+    let exp = `${marked}: a sílaba forte é a <b>${POSNAME(fe)}</b>, então a palavra é <b>${w.cls}</b>.`;
+    if (w.cls==='proparoxítona') exp += ' Lembre: toda proparoxítona tem acento.';
+    if (w.cls==='oxítona' && !/[ãõ]/.test(w.word)) exp += /[áéóâêô]$|[áéóâêô]s$|ém$|éns$/.test(w.word) ? ' Tem acento porque termina em A, E, O, EM ou ENS.' : ' Não tem acento porque não termina em A, E, O, EM ou ENS.';
+    html += fbHtml(Q.lastOk, exp);
+  }
+  return html;
+}
+function pickSyl(i){
+  if (Q.phase!==1) return;
+  const it=Q.items[Q.i]; Q.picked=i; Q.tonicOk = i===it.w.t; Q.phase=2;
+  if (canSpeak) falar(it.w.word);
+  renderQ();
+}
+function pickCls(c){
+  if (Q.answered) return;
+  const it=Q.items[Q.i]; Q.clsPicked=c;
+  const ok = Q.tonicOk && c===it.w.cls;
+  const marked = it.w.syl.map((s,i)=>i===it.w.t?s.toUpperCase():s).join('-');
+  record(it, ok, `Palavra: ${it.w.word}`, `${marked} (${it.w.cls})`, '');
+  renderQ(); focusNext();
+}
+/* ordenar */
+function orderHtml(it){
+  const placed = Q.sel.map((x,k)=>{
+    let c='piece'; if (Q.answered) c += x===it.items[k]?' right':' wrong';
+    return `<button class="${c}" ${Q.answered?'disabled':''} onclick="unpick(${k})"><span class="n">${k+1}</span>${esc(x)}</button>`;
+  }).join('');
+  const pool = Q.pool.map((x,k)=>Q.sel.includes(x)?'':`<button class="piece" onclick="pickPiece(${k})">${esc(x)}</button>`).join('');
+  let html = `${textDetails(it)}<p class="q">${esc(it.q)}</p>
+    <p class="sub">Toque nas peças na ordem certa. Para tirar uma peça, toque nela de novo.</p>
+    <div class="ordrow">${placed || '<span class="ph">Sua sequência aparece aqui</span>'}</div>
+    ${Q.answered?'':`<div class="pool">${pool}</div>`}`;
+  if (!Q.answered && Q.sel.length===it.items.length) html += `<div class="row"><button class="btn" onclick="checkOrder()">Conferir</button></div>`;
+  if (Q.answered) html += fbHtml(Q.lastOk, it.e, Q.lastOk?'':`<span>Ordem certa: <b>${it.items.map(esc).join(' → ')}</b></span>`);
+  return html;
+}
+function pickPiece(k){ if(Q.answered) return; const x=Q.pool[k]; if(x!=null && !Q.sel.includes(x)) Q.sel.push(x); renderQ(); }
+function unpick(k){ if(Q.answered) return; Q.sel.splice(k,1); renderQ(); }
+function checkOrder(){
+  const it=Q.items[Q.i];
+  const ok = Q.sel.every((x,k)=>x===it.items[k]);
+  record(it, ok, it.q, it.items.join(' → '), it.e);
+  renderQ(); focusNext();
+}
+/* registro */
+function record(it, ok, label, correct, exp){
+  Q.answered=true; Q.lastOk=ok;
+  const t = S.topics[it.topic] || (S.topics[it.topic]={ok:0,total:0});
+  t.total++;
+  if (ok){ t.ok++; Q.score++; Q.combo++; S.xp += 10 + (Q.combo>=3?5:0); }
+  else { Q.combo=0; S.missed[label]=(S.missed[label]||0)+1; Q.wrong.push({label, correct, exp, topic:it.topic}); }
+  save();
+}
+function focusNext(){ const b=document.getElementById('nextbtn'); if(b){ b.focus({preventScroll:true}); b.scrollIntoView({block:'nearest', behavior:'smooth'}); } }
+function nextQ(){ Q.i++; if (Q.i>=Q.items.length) return finish(); initItem(); renderQ(); irTopo(); }
+
+/* ===================== RESULTADO ===================== */
+function finish(){
+  const n=Q.items.length, p=Q.score/n;
+  const stars = p>=0.9?3:p>=0.7?2:p>=0.5?1:0;
+  let head='';
+  if (Q.ctx.world){
+    const r = S.worlds[Q.ctx.world] || (S.worlds[Q.ctx.world]={stars:0,best:0,plays:0});
+    r.plays++; r.stars=Math.max(r.stars,stars); r.best=Math.max(r.best,Math.round(p*100));
+    head = `${starsHtml(stars)}<h2>${stars===3?'Mundo dominado!':stars===2?'Muito bom!':stars===1?'Bom começo!':'Vamos treinar mais um pouco!'}</h2>
+      <p class="sub">Você acertou ${Q.score} de ${n}.${stars<3?' Faça 9 ou 10 acertos para ganhar 3 estrelas.':''}</p>`;
+  } else {
+    const nota = p*10; S.simCount=(S.simCount||0)+1; S.simBest = S.simBest==null?nota:Math.max(S.simBest,nota);
+    head = `<span class="sub">Sua nota no simulado</span><span class="grade">${fmt(nota)}</span>
+      <h2>${nota>=9?'Pronto para a prova!':nota>=7?'Muito bem! Revise os erros abaixo.':'Vamos revisar e tentar de novo!'}</h2>
+      <p class="sub">Você acertou ${Q.score} de ${n}.</p>`;
+  }
+  save();
+  const wrong = Q.wrong.length ? `<div class="miss-list"><h3>Para revisar</h3>${Q.wrong.map(w=>`
+      <div class="miss-item"><span><b>${esc(w.label)}</b></span><span class="c">Certo: ${esc(w.correct)}</span>${w.exp?`<span class="sub" style="font-weight:600">${esc(w.exp).replace(/&lt;br&gt;/g,' ')}</span>`:''}</div>`).join('')}</div>` : '<div class="good" style="width:100%">Nenhum erro. Gabaritou!</div>';
+  app.innerHTML = `
+    <div class="card result" style="--wc:var(${Q.ctx.cor})">
+      ${head}
+      <div class="row" style="justify-content:center">
+        <button class="btn" onclick="${Q.ctx.world?`startWorld('${Q.ctx.world}')`:'startSim()'}">Jogar de novo</button>
+        <button class="btn ghost" onclick="renderHome()">Voltar ao mapa</button>
+      </div>
+      ${wrong}
+    </div>`;
+  irTopo();
+  if (stars===3 || (Q.ctx.sim && p>=0.9)) confetti();
+}
+function confetti(){
+  try{ if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; }catch(e){}
+  const cols=['--w1','--w2','--w3','--w4','--w5','--w6','--sun'];
+  for(let i=0;i<60;i++){
+    const d=document.createElement('div'); d.className='confetti';
+    d.style.left=Math.random()*100+'vw'; d.style.background=`var(${cols[i%cols.length]})`;
+    d.style.animationDelay=(Math.random()*0.6)+'s'; document.body.appendChild(d);
+    setTimeout(()=>d.remove(), 2600);
+  }
+}
+
+/* ===================== PAINEL DA FAMÍLIA ===================== */
+let resetArmed=false;
+function renderParents(){
+  resetArmed=false;
+  const bars = Object.keys(TOPIC_NAMES).map((k,i)=>{
+    const t=S.topics[k]; const p = t&&t.total ? t.ok/t.total : null;
+    const col = p==null?'var(--line)':p>=0.8?'var(--ok)':p>=0.6?'var(--sun)':'var(--bad)';
+    return `<div class="bar"><span>${TOPIC_NAMES[k]}</span><span class="track"><i style="width:${p==null?0:Math.round(p*100)}%;background:${col}"></i></span><span class="v">${p==null?'–':Math.round(p*100)+'%'}</span></div>`;
+  }).join('');
+  const missed = Object.entries(S.missed).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  app.innerHTML = `
+    <button class="btn ghost back" onclick="renderHome()">← Mapa</button>
+    <div class="card">
+      <h2>Painel da família</h2>
+      <p class="sub">Acertos por assunto (verde a partir de 80%). Simulados feitos: ${S.simCount||0}${S.simBest!=null?` · melhor nota: ${fmt(S.simBest)}`:''}.</p>
+      <div class="bars">${bars}</div>
+    </div>
+    <div class="card">
+      <h3>O que ele mais errou</h3>
+      ${missed.length?`<div class="miss-list">${missed.map(([k,v])=>`<div class="miss-item"><span>${esc(k)}</span><span class="sub">${v} ${v>1?'vezes':'vez'}</span></div>`).join('')}</div>`:'<p class="sub">Ainda sem erros registrados. Os erros aparecem aqui depois que ele jogar.</p>'}
+    </div>
+    <div class="card">
+      <h3>O que as fichas mostraram</h3>
+      <ul style="margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px">
+        <li>Classificou <b>sofá</b> e <b>café</b> como paroxítonas (são oxítonas).</li>
+        <li>Escreveu que a oxítona tem a sílaba forte "no início" e a proparoxítona "no final". O certo é: oxítona = última; paroxítona = penúltima; proparoxítona = antepenúltima.</li>
+        <li>Classificou <b>matemática</b> como paroxítona (é proparoxítona).</li>
+        <li>Na atividade de aula mais recente, classificou pé, café, casa, médico, sol e sofá corretamente. Melhorou!</li>
+        <li>Acentuação de monossílabos e separação silábica estavam bem.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>O que o livro (capítulos 9 e 10) mostrou</h3>
+      <ul style="margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px">
+        <li><b>Diário da Lili (p. 22):</b> marcou as mãos como a parte do corpo que doeu. O texto diz que foram os <b>pés</b>, porque ela dançou. Vale treinar a releitura.</li>
+        <li><b>Fábula "A raposa e o corvo" (p. 84):</b> respondeu que a história não traz ensinamento. Toda fábula tem uma moral.</li>
+        <li><b>Diálogo (p. 85):</b> escreveu o pedido de desculpas como narração, sem travessão. Na prova, pedir diálogo = falas com travessão.</li>
+        <li><b>"A cegonha e a raposa" (p. 89):</b> as perguntas sobre moral, tipo de discurso e expressão de tempo estão em branco. Bom para fazer com ele hoje.</li>
+        <li>Mandou bem em carta (remetente, destinatário, saudação), monossílabos acentuados e nas características da raposa e do corvo.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Para a noite antes da prova</h3>
+      <ul style="margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px">
+        <li>Peça para ele explicar em voz alta o truque de contar as sílabas de trás para a frente.</li>
+        <li>Diga palavras do dia a dia (geladeira, televisão, mágico, chulé) e peça para ele "chamar" a palavra e classificar.</li>
+        <li>Peça para ele dizer as 5 partes da carta e as 6 partes do relato sem olhar.</li>
+        <li>Conte uma fábula curta e peça a moral. Depois peça para transformar uma fala em discurso indireto.</li>
+        <li>Faça um simulado só no final, para ele dormir com uma nota boa na cabeça.</li>
+      </ul>
+    </div>
+    <button class="btn ghost" id="resetbtn" style="align-self:flex-start" onclick="resetAll()">Apagar o progresso</button>`;
+  irTopo();
+}
+function resetAll(){
+  const b=document.getElementById('resetbtn');
+  if(!resetArmed){ resetArmed=true; b.textContent='Toque de novo para confirmar'; return; }
+  S={xp:0, worlds:{}, topics:{}, missed:{}, simBest:null, simCount:0}; save(); renderHome();
+}
+
+renderHome();
+</script>
+
+</body></html>

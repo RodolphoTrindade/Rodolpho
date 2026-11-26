@@ -177,7 +177,7 @@ label.f{display:grid;gap:5px;font-size:12.5px;color:var(--muted)}
         <label class="f">Ícone<input type="text" id="fIcon" maxlength="4" placeholder="🔗"></label>
         <label class="f">Nome<input type="text" id="fName" required placeholder="Ex.: Sistema SMS"></label>
       </div>
-      <label class="f">Endereço (URL)<input type="url" id="fUrl" placeholder="https://…"></label>
+      <label class="f">Endereço (URL)<input type="text" id="fUrl" placeholder="https://… ou /familia/jogo.html"></label>
       <label class="f">Descrição<input type="text" id="fDesc" placeholder="Opcional"></label>
       <div class="row2" style="grid-template-columns:1fr 1fr">
         <label class="f">Categoria<select id="fCat"></select></label>
@@ -409,9 +409,10 @@ label.f{display:grid;gap:5px;font-size:12.5px;color:var(--muted)}
   async function checkLinks(list = data.links){
     const urls = [...new Set(list.map(l => l.url).filter(Boolean))];
     if (!urls.length) return;
+    const abs = urls.map(u => { try { return new URL(u, location.href).href; } catch { return u; } });
     try {
-      const { results } = await api('/api/check', { method: 'POST', body: JSON.stringify({ urls }) });
-      for (const r of results) status[r.url] = r;
+      const { results } = await api('/api/check', { method: 'POST', body: JSON.stringify({ urls: abs }) });
+      results.forEach((r, i) => { status[urls[i]] = r; });
       renderGrid(); renderStats();
     } catch {}
   }
@@ -433,7 +434,7 @@ label.f{display:grid;gap:5px;font-size:12.5px;color:var(--muted)}
   }
   $('#linkForm').addEventListener('submit', (e) => {
     let url = $('#fUrl').value.trim();
-    if (url && !/^https?:\/\//i.test(url)) url = 'https://' + url;
+    if (url && !/^https?:\/\//i.test(url) && !url.startsWith('/')) url = 'https://' + url;
     const v = { icon: $('#fIcon').value.trim() || '🔗', name: $('#fName').value.trim(), url, desc: $('#fDesc').value.trim(), category: $('#fCat').value, mode: $('#fMode').value };
     if (!v.name) { e.preventDefault(); return; }
     if (editingId) Object.assign(data.links.find(x => x.id === editingId), v);
